@@ -93,7 +93,7 @@ app.filter.building='support';assert.equal(app.overview.value.total,3);assert.eq
 app.chooseAlarmStage('verify');assert.equal(app.events.value.length,1);assert.equal(app.overview.value.total,3);
 app.reset();assert.equal(app.alarmStage.value,'all');
 assert(template.includes('今日报警事件'));assert(template.includes('alarm-stat-cards'));
-for(const removed of ['class="side left-side"','class="bottom-summary"','class="legend"','n-radio-group','全部历史','自定义'])assert(!template.includes(removed),removed);
+for(const removed of ['class="side left-side"','class="bottom-summary"','class="legend"','全部历史','自定义'])assert(!template.includes(removed),removed);
 console.log('PASS: today-only alarm cards filter the list, keep stable scoped counts and reset selection; old tabs, left list and bottom summary removed.');
 
 app.reset();
@@ -211,3 +211,25 @@ assert(fs.readFileSync(__dirname+'/监测一张图.css','utf8').includes('.floor
 console.log('PASS: fire completed state appears in building records; floor detail escapes the header stacking context.');
 
 assert(app.records.value.filter(r=>r.kind==='fire').every(r=>r.level===null));
+
+assert(!template.split('<div v-if="actionOpen"')[0].includes('n-radio-group'),'removed screen filters must remain absent');
+
+// Ledger-equivalent person selection: draft selection only commits on confirmation.
+app.actionForm.value.violator=null;
+app.openPersonPicker();assert.equal(app.personPickerShow.value,true);assert.equal(app.personOrg.value,'company');
+const candidate=app.pickerPeople.value[0];assert(candidate&&app.pickerOrgs.value.length);
+app.personDraft.value=candidate.value;app.personPickerShow.value=false;assert.equal(app.actionForm.value.violator,null);
+app.openPersonPicker();app.personDraft.value=candidate.value;app.confirmPerson();assert.equal(app.actionForm.value.violator,candidate.value);assert.equal(app.personPickerShow.value,false);
+app.personSearch.value='not-a-person';assert.equal(app.pickerRows.value.length,0);app.personSearch.value='';
+app.personOrg.value=candidate.departmentId;assert(app.pickerRows.value.some(p=>p.id===candidate.id));
+app.changeViolatorType('external');assert.equal(app.actionForm.value.violator,null);assert.equal(app.actionForm.value.externalName,'');
+const pendingPersonCase=app.records.value.find(r=>r.phase==='待接收');assert(pendingPersonCase);
+context.confirm=()=>true;app.goAction(pendingPersonCase);app.goAction(app.records.value.find(r=>r.id===pendingPersonCase.id));
+app.changeViolatorType('external');app.submitAction();assert(app.actionError.value.includes('外来人员姓名'));
+app.actionForm.value.externalName='测试访客';app.actionForm.value.externalPhone='123';app.submitAction();assert(app.actionError.value.includes('11位手机号码'));
+app.actionForm.value.externalPhone='13912345678';app.actionForm.value.description='现场核实';app.actionForm.value.measures='已整改';app.submitAction();
+const externalSaved=JSON.parse(store.get('alarm-case-disposals-v1'))[pendingPersonCase.id];assert.equal(externalSaved.violatorType,'external');assert.equal(externalSaved.violator,'测试访客（13912345678）');
+const compileContext={console};vm.createContext(compileContext);vm.runInContext(fs.readFileSync(__dirname+'/assets/vendor/vue.global.prod.js','utf8'),compileContext);compileContext.Vue.compile(template,{decodeEntities:value=>value.replaceAll('&gt;','>').replaceAll('&lt;','<').replaceAll('&quot;',String.fromCharCode(34)).replaceAll('&amp;','&')});
+console.log('PASS: personnel picker confirmation/cancellation, organization/name filtering, external validation/persistence and Vue template compilation.');
+
+assert(template.includes('<n-config-provider abstract :theme="null"'),"personnel modal provider must not create a full-height screen flex item");
