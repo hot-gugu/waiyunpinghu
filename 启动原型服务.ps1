@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 Set-Location -LiteralPath $PSScriptRoot
 $siteUrl = 'http://127.0.0.1:8766/'
 try { $service = Invoke-RestMethod ($siteUrl + '__prototype_annotations') -TimeoutSec 2 } catch { $service = $null }
@@ -11,4 +11,4 @@ if ($service.service -ne 'sinotrans-prototype-annotations') {
     }
 }
 if ($service.service -ne 'sinotrans-prototype-annotations') { throw '原型服务启动失败，请检查 8766 端口是否被占用。' }
-Start-Process ($siteUrl + [Uri]::EscapeDataString('方案图册.html'))
+Start-Process ($siteUrl + [Uri]::EscapeDataString('AI隐患核查.html'))

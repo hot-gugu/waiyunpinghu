@@ -447,7 +447,7 @@
     right.setAttribute('aria-label', '右侧中心导航');
     const brand = document.createElement('a');
     brand.className = 'unified-brand';
-    brand.href = '方案图册.html';
+    brand.href = 'AI隐患核查.html';
     brand.setAttribute('aria-label', '进入监测一张图');
     brand.innerHTML = '<img class="unified-brand-mark" src="assets/branding/platform-logo.png" alt=""><span class="unified-brand-name">AI智能报警处置平台</span>';
     header.append(left, brand, right);
