@@ -1,0 +1,10 @@
+/* Preserve the reference layout and use the local production typography. */
+body{color:#24344d;font-size:14px;font-weight:400}h1,h2,h3,th,label,button,.font-medium,.font-semibold{font-weight:400!important}h2,h3{font-size:16px!important}.radius-sm{border-radius:8px!important}input,select{min-height:36px;border-color:#d8e2ef!important;border-radius:8px!important}#areaDrawer label,#deviceDrawer label{color:#24344d}#areaDrawer>aside,#deviceDrawer>aside{max-height:100vh}#areaDrawer>aside>div:last-child{flex:none}table th{color:#526b91;background:#fafbfd}table td{border-color:#e7eef8}#areaDrawer,#gisModal,#deviceDrawer,#cameraPicker,#deleteConfirm{z-index:1100!important}#gisModal{z-index:1200!important}#cameraPicker{z-index:1300!important}#areaDrawer h3{margin-bottom:4px}.zone-cell{font-weight:400}.zone-cell:focus-visible,button:focus-visible{outline:2px solid #0879ff;outline-offset:2px}
+
+/* Keep the reference record indexes stable for add/edit and device association. */
+#areaConfigTable>thead>tr>th:nth-child(4),#areaConfigTable>thead>tr>th:nth-child(5),#areaConfigTable>thead>tr>th:nth-child(6),#areaConfigTable>tbody>tr>td:nth-child(4),#areaConfigTable>tbody>tr>td:nth-child(5),#areaConfigTable>tbody>tr>td:nth-child(6){display:none}
+
+/* Omitted fields stay unavailable in both create and edit modes. */
+#areaDrawer div:has(>#areaRisk),#areaDrawer div:has(>#areaOwner),#areaDrawer div:has(>#areaOwnerPhone){display:none!important}
+#areaDivisionError{color:#ef2f4f;font-size:12px;margin-top:8px}
+#openAreaDivision[aria-invalid="true"]{border-color:#ef2f4f!important}
