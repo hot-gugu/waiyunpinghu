@@ -108,6 +108,7 @@
 .floor-device.alarm::after{animation-delay:1s}
 .floor-device.alarm>i{position:relative;z-index:1}
 @keyframes floor-alarm-ripple{0%{transform:scale(.85);opacity:.85}75%{opacity:.25}100%{transform:scale(2.4);opacity:0}}
+.alarm-list .event-head>span:only-child,
 .floor-alarm-row .event-head>span:only-child{margin-left:auto}
 
 .map-alarm-detail.detail{width:min(600px,94vw);background:linear-gradient(145deg,#142d58,#0f1f3d);color:#dce8f7;border-color:#365d8c}
@@ -212,3 +213,6 @@
 .case-external-fields{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:600px){.case-external-fields{grid-template-columns:1fr}}
 .case-person-inline{display:flex;flex-direction:column;align-items:stretch;gap:16px}.case-person-type{display:block;flex:none;white-space:nowrap}.case-person-type .n-radio{display:inline-flex;align-items:center;white-space:nowrap}.case-person-type .n-radio__label{white-space:nowrap;flex:none}.case-person-inline-fields{min-width:0}
 .map-action-form .case-person-trigger{background:transparent;color:inherit;border-color:rgba(190,211,238,.45)}
+
+/* Flood sensors follow the existing floor fire-device styles. */
+.floor-device.flood{background:#0891b2}.floor-type-row.flood .fa{color:#53cce2}
