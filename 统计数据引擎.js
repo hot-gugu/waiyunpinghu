@@ -56,7 +56,7 @@
   const stats=rows=>{
     const confirmed=rows.filter(r=>r.confirmed),done=confirmed.filter(r=>r.completed),mis=rows.filter(r=>r.status==='已复核'&&r.result==='误报');
     const planned=rows.filter(r=>r.status==='已复核'&&r.result==='计划内事件'),pending=rows.filter(r=>r.status!=='已复核');
-    return {total:rows.length,confirmed:confirmed.length,mis:mis.length,planned:planned.length,pending:pending.length,reviewed:rows.length-pending.length,accuracy:percent(confirmed.length,confirmed.length+mis.length),reviewRate:percent(rows.length-pending.length,rows.length),closed:done.length,closeRate:percent(done.length,confirmed.length),waiting:confirmed.filter(r=>!r.received&&!r.completed).length,processing:confirmed.filter(r=>r.received&&!r.completed).length,reviewLate:rows.filter(r=>r.reviewLate).length,disposalLate:confirmed.filter(r=>r.disposalLate).length,avgMinutes:done.length?Math.round(done.reduce((s,r)=>s+r.duration,0)/done.length):null};
+    return {total:rows.length,confirmed:confirmed.length,mis:mis.length,planned:planned.length,suspected:rows.filter(r=>r.status==='已复核'&&r.result==='疑似').length,pending:pending.length,reviewed:rows.length-pending.length,accuracy:percent(confirmed.length,confirmed.length+mis.length),reviewRate:percent(rows.length-pending.length,rows.length),closed:done.length,closeRate:percent(done.length,confirmed.length),waiting:confirmed.filter(r=>!r.received&&!r.completed).length,processing:confirmed.filter(r=>r.received&&!r.completed).length,reviewLate:rows.filter(r=>r.reviewLate).length,disposalLate:confirmed.filter(r=>r.disposalLate).length,avgMinutes:done.length?Math.round(done.reduce((s,r)=>s+r.duration,0)/done.length):null};
   };
   const groups=(rows,key)=>{
     const map=new Map();rows.forEach(r=>{const value=key==='date'?r.time.slice(0,10):key==='person'?r.disposal?.violator?.replace(/（.*$/,'')||'未登记违规人员':r[key]||'未分配';if(!map.has(value))map.set(value,[]);map.get(value).push(r);});
@@ -74,7 +74,7 @@
   const download=(name,blob)=>{const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
   const insights=rows=>{
     const s=stats(rows),top=groups(rows.filter(r=>r.confirmed),'area').sort((a,b)=>b.confirmed-a.confirmed)[0];
-    const notes=[s.total?'期间共触发 '+s.total+' 条报警，确认违规 '+s.confirmed+' 条，误报 '+s.mis+' 条，计划内事件 '+s.planned+' 条。':'期间没有报警记录，暂无可分析数据。'];
+    const notes=[s.total?'期间共触发 '+s.total+' 条报警，确认违规 '+s.confirmed+' 条，误报 '+s.mis+' 条，计划内事件 '+s.planned+' 条，疑似 '+s.suspected+' 条。':'期间没有报警记录，暂无可分析数据。'];
     if(s.confirmed)notes.push('确认违规已闭环 '+s.closed+' 条，闭环率 '+fmt(s.closeRate)+'；仍有 '+(s.waiting+s.processing)+' 条待闭环。');
     if(top)notes.push('确认违规最多的区域为 '+top.name+'，共 '+top.confirmed+' 条，建议优先核查现场作业与防护措施。');
     if(s.pending)notes.push('待复核 '+s.pending+' 条，请优先完成复核，再评估准确率。');

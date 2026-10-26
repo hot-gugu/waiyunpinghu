@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "28146c3f-1556-40b4-b27c-cb0ab0c088b6",
+  "status": "current",
+  "command": "deliver",
+  "type": "sequence",
+  "input": "D:\\天泽智联\\深圳中外运物流有限公司科技兴安暨智慧园区四期项目\\github生产静态页面\\waiyunpinghu\\华南平台联动业务流程图.sequence.json",
+  "output": "D:\\天泽智联\\深圳中外运物流有限公司科技兴安暨智慧园区四期项目\\github生产静态页面\\waiyunpinghu\\华南平台联动业务流程图.html",
+  "specification": {
+    "sha256": "57bd77564307af6a026afdfc626f2f3cc6551818088bc1bdc8308d414b22e961",
+    "bytes": 4631
+  },
+  "artifact": {
+    "sha256": "97444a1a479619f60d25a4f7b1fb95b1ebbfbbd6f45edccc7b313ce18f08b2d1",
+    "bytes": 811111
+  }
+}

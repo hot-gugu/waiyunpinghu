@@ -17,13 +17,13 @@
   if(window.AlarmSourceRules?.isFire(base)){error.textContent='消防设备报警不提供AI复核';return;}
   if(base.status==='已复核'){error.textContent='该报警已复核，请返回监测一张图查看最新状态';return;}
   const result=document.querySelector('[data-review-result][aria-pressed="true"]')?.dataset.reviewResult;
-  if(!['确认违规','误报','计划内事件'].includes(result)){error.textContent='请选择复核结果';return;}
+  if(!['确认违规','误报','计划内事件','疑似'].includes(result)){error.textContent='请选择复核结果';return;}
   const misreport=document.getElementById('misreportType');if(result==='误报'&&!misreport.value){error.textContent='请选择误报类型';return;}
   const type=document.getElementById('reviewEventType').value,level=document.getElementById('reviewAlarmLevel').value;
   if(!AlarmEventLevels.types.includes(type)||!AlarmEventLevels.levels.includes(level)){error.textContent='请选择有效的事件类型和报警等级';return;}
   if(!confirm('确认提交本次复核结果？'))return;
   const d=new Date(),time=d.toLocaleDateString('sv-SE')+' '+d.toTimeString().slice(0,8);
-  const updated={...base,status:'已复核',result,type,level,reviewer:'张安全',reviewTime:time,remark:document.querySelector('textarea')?.value.trim()||'',misreportType:result==='误报'?misreport.selectedOptions[0].textContent:''};
+  const updated={...base,eventJudgment:document.getElementById('reviewEventJudgment')?.value||'',status:'已复核',result,type,level,reviewer:'张安全',reviewTime:time,remark:document.querySelector('textarea')?.value.trim()||'',misreportType:result==='误报'?misreport.selectedOptions[0].textContent:''};
   try{localStorage.setItem('global-alarm-center-v1',JSON.stringify({...state,extra:[updated,...(state.extra||[]).filter(r=>r.id!==id)]}));}catch{error.textContent='复核结果保存失败，请检查浏览器存储后重试';return;}
   location.href=target;
  };

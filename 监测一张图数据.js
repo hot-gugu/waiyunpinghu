@@ -11,7 +11,7 @@
  ['仓库作业区摄像头01','装卸通道摄像头02','限制通行区摄像头03','作业平台摄像头04'].forEach((name,i)=>legacy[name]=devices[i*6+2].id);
  const isFire=r=>window.AlarmSourceRules?.isFire(r)||r.kind==='fire'||devices.find(d=>d.id===r.deviceId)?.kind==='fire';
  const fireName=r=>({'烟雾报警':'烟感火灾报警','焰火报警':'电气火灾剩余电流报警','消防通道堵塞':'消防水压偏低'}[r.type]||r.type);
- const phase=(r,receipts,disposals)=>isFire(r)?(r.alarmStatus||r.fireStatus?window.AlarmSourceRules.fireStatus(r):(disposals[r.id]?'已处置':'待处置')):r.status!=='已复核'?'待复核':r.result==='误报'?'误报':r.result==='计划内事件'?'计划内事件':r.result==='确认违规'?(disposals[r.id]?'已处置':receipts[r.id]?'待处置':'待接收'):'待复核';
+ const phase=(r,receipts,disposals)=>isFire(r)?(r.alarmStatus||r.fireStatus?window.AlarmSourceRules.fireStatus(r):(disposals[r.id]?'已处置':'待处置')):r.status!=='已复核'?'待复核':r.result==='误报'?'误报':r.result==='计划内事件'?'计划内事件':r.result==='疑似'?'疑似':r.result==='确认违规'?(disposals[r.id]?'已处置':receipts[r.id]?'待处置':'待接收'):'待复核';
  const unfinished=s=>['待复核','待接收','待处置'].includes(s);
  const sort=(a,b)=>Number(unfinished(b.phase))-Number(unfinished(a.phase))||(unfinished(a.phase)&&unfinished(b.phase)&&!isFire(a)&&!isFire(b)?['一级','二级','三级','四级'].indexOf(a.level)-['一级','二级','三级','四级'].indexOf(b.level):0)||b.time.localeCompare(a.time)||a.id.localeCompare(b.id);
  const locate=r=>devices.find(d=>d.id===(r.deviceId||legacy[r.device]));

@@ -58,3 +58,17 @@ if(window.AlarmEventLevels)window.ALARM_DEMO_RECORDS.forEach(record=>record.leve
  if(!disposals[w4])disposals[w4]={person:'张安全',violator:'王值守',time:stamp('09:05:00'),description:'到场核实消防通道被货物占用，已现场清理恢复。',measures:'清除通道障碍物并划定禁放区域。',evidence:[{id:w4+'-photo',name:'现场照片',url:'sample-blocked-passage.jpg'}]};
  try{localStorage.setItem(receiptKey,JSON.stringify(receipts));localStorage.setItem(disposalKey,JSON.stringify(disposals));}catch{}
 })();
+
+// Independent suspected-review example shared by the alarm list and detail views.
+(() => {
+ const today=new Date().toLocaleDateString('sv-SE'),id='AI-SUSPECTED-DEMO-'+today;
+ if(window.ALARM_DEMO_RECORDS.some(r=>r.id===id))return;
+ const base=window.ALARM_DEMO_RECORDS.find(r=>!window.AlarmSourceRules?.isFire(r));if(!base)return;
+ window.ALARM_DEMO_RECORDS.push({...base,id,time:today+' 10:20:00',status:'已复核',result:'疑似',reviewer:'张安全',reviewTime:today+' 10:22:00',remark:'现有画面不足以确认是否违规，标记为疑似，待进一步核实。',misreportType:'',overdue:'否',overdueSeconds:0});
+})();
+
+// Populate event-judgment values on built-in reviewed examples.
+window.ALARM_DEMO_RECORDS.forEach(record=>{
+ if(record.status!=='已复核'||record.eventJudgment||window.AlarmSourceRules?.isFire(record))return;
+ record.eventJudgment=record.result==='误报'?'算法误报':record.result==='疑似'?'画面异常':/佩戴|穿|口罩|帽|反光衣|安全带/.test(record.type)?'穿戴不规范':'违规或异常';
+});

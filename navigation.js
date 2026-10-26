@@ -69,11 +69,6 @@
         ]
       },
       {
-        "title": "报警处置移动端",
-        "icon": "fa-mobile",
-        "href": "报警处置移动端.html"
-      },
-      {
         "title": "规格说明书",
         "icon": "fa-file-text-o",
         "href": "规格说明书.html"

@@ -216,7 +216,7 @@
                         </div>
                         
                         
-                        <div><label for="reviewResultFilter" class="text-xs text-textSecondary block mb-1">复核结果</label><select id="reviewResultFilter" class="w-full border border-borderLine rounded px-2 py-1.5 text-sm"><option value="">全部</option><option>误报</option><option>确认违规</option><option>计划内事件</option></select></div><div><label for="reviewOverdueFilter" class="text-xs text-textSecondary block mb-1">复核是否超期</label><select id="reviewOverdueFilter" class="w-full border border-borderLine rounded px-2 py-1.5 text-sm"><option value="">全部</option><option>是</option><option>否</option></select></div><div class="col-span-3"><label class="text-xs text-textSecondary block mb-1">关键词</label>
+                        <div><label for="reviewResultFilter" class="text-xs text-textSecondary block mb-1">复核结果</label><select id="reviewResultFilter" class="w-full border border-borderLine rounded px-2 py-1.5 text-sm"><option value="">全部</option><option>误报</option><option>确认违规</option><option>计划内事件</option><option>疑似</option></select></div><div><label for="reviewOverdueFilter" class="text-xs text-textSecondary block mb-1">复核是否超期</label><select id="reviewOverdueFilter" class="w-full border border-borderLine rounded px-2 py-1.5 text-sm"><option value="">全部</option><option>是</option><option>否</option></select></div><div class="col-span-3"><label class="text-xs text-textSecondary block mb-1">关键词</label>
                             <input type="text" id="alarmKeyword" placeholder="请输入报警ID、设备名称、责任区域、复核人或责任人"
                                 class="w-full border border-borderLine rounded px-2 py-1.5 text-sm">
                         </div>
@@ -227,11 +227,12 @@
                 </div>
 
                 <!-- 统计卡片行 -->
-<div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-4 mb-5" id="alarmStats"><div class="bg-white rounded-lg p-4 shadow-sm flex items-center gap-3" style="min-width:0"><div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#eef6ff;color:#0879ff"><i class="fa fa-bell text-lg"></i></div><div><div class="text-xs text-textSecondary whitespace-nowrap">报警总数</div><div class="text-xl" style="font-weight:500;white-space:nowrap" data-alarm-stat="total">—</div></div></div>
+<div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-4 mb-5" id="alarmStats"><div class="bg-white rounded-lg p-4 shadow-sm flex items-center gap-3" style="min-width:0"><div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#eef6ff;color:#0879ff"><i class="fa fa-bell text-lg"></i></div><div><div class="text-xs text-textSecondary whitespace-nowrap">报警总数</div><div class="text-xl" style="font-weight:500;white-space:nowrap" data-alarm-stat="total">—</div></div></div>
 <div class="bg-white rounded-lg p-4 shadow-sm flex items-center gap-3" style="min-width:0"><div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#fff3d9;color:#d98600"><i class="fa fa-clock-o text-lg"></i></div><div><div class="text-xs text-textSecondary whitespace-nowrap">待复核</div><div class="text-xl" style="font-weight:500;white-space:nowrap" data-alarm-stat="pending">—</div></div></div>
 <div class="bg-white rounded-lg p-4 shadow-sm flex items-center gap-3" style="min-width:0"><div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#fff4f5;color:#ef2f4f"><i class="fa fa-exclamation-triangle text-lg"></i></div><div><div class="text-xs text-textSecondary whitespace-nowrap">违规</div><div class="text-xl" style="font-weight:500;white-space:nowrap" data-alarm-stat="violation">—</div></div></div>
 <div class="bg-white rounded-lg p-4 shadow-sm flex items-center gap-3" style="min-width:0"><div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#fafbfd;color:#8190a5"><i class="fa fa-repeat text-lg"></i></div><div><div class="text-xs text-textSecondary whitespace-nowrap">误报</div><div class="text-xl" style="font-weight:500;white-space:nowrap" data-alarm-stat="misreport">—</div></div></div>
 <div class="bg-white rounded-lg p-4 shadow-sm flex items-center gap-3" style="min-width:0"><div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#eef6ff;color:#0879ff"><i class="fa fa-calendar-check-o text-lg"></i></div><div><div class="text-xs text-textSecondary whitespace-nowrap">计划内事件</div><div class="text-xl" style="font-weight:500;white-space:nowrap" data-alarm-stat="planned">—</div></div></div>
+<div class="bg-white rounded-lg p-4 shadow-sm flex items-center gap-3" style="min-width:0"><div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#fff3d9;color:#d98600"><i class="fa fa-question-circle text-lg"></i></div><div><div class="text-xs text-textSecondary whitespace-nowrap">疑似</div><div class="text-xl" style="font-weight:500;white-space:nowrap" data-alarm-stat="suspected">—</div></div></div>
 <div class="bg-white rounded-lg p-4 shadow-sm flex items-center gap-3" style="min-width:0"><div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#e8fbf4;color:#12a36a"><i class="fa fa-pie-chart text-lg"></i></div><div><div class="text-xs text-textSecondary whitespace-nowrap">复核完成率</div><div class="text-xl" style="font-weight:500;white-space:nowrap" data-alarm-stat="completion">—</div></div></div>
 <div class="bg-white rounded-lg p-4 shadow-sm flex items-center gap-3" style="min-width:0"><div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#eef6ff;color:#0879ff"><i class="fa fa-bullseye text-lg"></i></div><div><div class="text-xs text-textSecondary whitespace-nowrap">准确率</div><div class="text-xl" style="font-weight:500;white-space:nowrap" data-alarm-stat="accuracy">—</div></div></div></div>
 
@@ -374,12 +375,12 @@
   row.cells[9].querySelector('span').textContent = record.status;
   row.cells[9].querySelector('span').style.cssText = 'font-size:12px;font-weight:400;border-radius:999px;padding:2px 8px;color:'+(reviewed?'#12a36a':'#d98600')+';background:'+(reviewed?'#e8fbf4':'#fff3d9');
   row.cells[10].textContent = record.result;
-  row.cells[10].style.color = record.result === '确认违规' ? '#ef2f4f' : record.result === '误报' ? '#0879ff' : '#24344d';
+  row.cells[10].style.color = record.result === '确认违规' ? '#ef2f4f' : record.result === '疑似' ? '#d98600' : record.result === '误报' ? '#0879ff' : '#24344d';
   row.cells[11].textContent = record.reviewer;
   row.cells[12].textContent = record.reviewTime;
   const detail = row.querySelector('.detail-btn');
   detail.dataset.status = reviewed ? 'done' : 'pending';
-  detail.dataset.result = {'确认违规':'violation','误报':'misreport','计划内事件':'planned'}[record.result] || '';
+  detail.dataset.result = {'确认违规':'violation','误报':'misreport','计划内事件':'planned','疑似':'suspected'}[record.result] || '';
   if(reviewed){row.cells[14].replaceChildren(detail);} else {
    row.cells[14].querySelector('a[href]').href='AI识别的违章复核.html?alarmId='+encodeURIComponent(record.id);
   }
@@ -397,9 +398,9 @@ window.renderAlarmReview = record => {
   target.innerHTML='<div style="border:1px solid rgba(190,211,238,.95);border-radius:8px;padding:16px;background:#fff3d9;color:#d98600;font-size:14px;font-weight:400">待复核</div>';return;
  }
  const result = record.result;
- const color = result === '确认违规' ? '#ef2f4f' : '#0879ff';
- const background = result === '确认违规' ? '#fff4f5' : '#eef6ff';
- let fields = [['复核结果',result]];
+ const color = result === '确认违规' ? '#ef2f4f' : result === '疑似' ? '#d98600' : '#0879ff';
+ const background = result === '确认违规' ? '#fff4f5' : result === '疑似' ? '#fff3d9' : '#eef6ff';
+ let fields = [['复核结果',result],['事件判定',record.eventJudgment?.trim() || '—']];
  if(result === '确认违规') fields.push(['违规事件类型',record.type],['报警等级',record.level]);
  if(result === '误报') fields.push(['误报类型',record.misreportType || '—']);
  fields.push(['备注说明',record.remark || '—'],['复核人',record.reviewer || '—'],['复核时间',record.reviewTime || '—']);
@@ -437,7 +438,8 @@ document.getElementById('alarmDetailVideo').addEventListener('error',()=>{docume
                 const keys = ['id','type','time','device','confidence','level','area','owner','photo','status','result','reviewer','reviewTime','overdue'];
                 const record = Object.fromEntries(keys.map((key,index)=>[key,row.cells[index].textContent.trim()]));
                 record.photo = row.querySelector('img').src;
-                const source = (window.ALARM_DEMO_RECORDS || []).find(item => item.id === record.id);
+                let saved=[];try{saved=JSON.parse(localStorage.getItem('global-alarm-center-v1'))?.extra||[];}catch{}
+                const source = saved.find(item=>item.id===record.id)||(window.ALARM_DEMO_RECORDS || []).find(item => item.id === record.id);
                 window.fillAlarmDetail({...source,...record});
                 panel.classList.remove('translate-x-full');
             });
@@ -476,7 +478,7 @@ document.querySelectorAll('[data-review-overdue-seconds]').forEach(cell => { con
 function updateAlarmStats() {
  const rows = Array.from(document.querySelectorAll('tbody tr'));
  const visibleRows = rows.filter(row => !row.hidden && row.cells.length === 15);
- const counts = { total: visibleRows.length, pending: 0, violation: 0, misreport: 0, planned: 0 };
+ const counts = { total: visibleRows.length, pending: 0, violation: 0, misreport: 0, planned: 0, suspected: 0 };
  visibleRows.forEach(row => {
   const status = row.cells[9].textContent.trim();
   const result = row.cells[10].textContent.trim();
@@ -485,9 +487,10 @@ function updateAlarmStats() {
    if (result === '确认违规') counts.violation++;
    if (result === '误报') counts.misreport++;
    if (result === '计划内事件') counts.planned++;
+   if (result === '疑似') counts.suspected++;
   }
  });
- const reviewed = counts.violation + counts.misreport + counts.planned;
+ const reviewed = counts.violation + counts.misreport + counts.planned + counts.suspected;
  const judged = counts.violation + counts.misreport;
  document.querySelectorAll('[data-alarm-stat]').forEach(el => {
   const key = el.dataset.alarmStat;

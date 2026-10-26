@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "fail",
+  "type": "sequence",
+  "quality": "showcase",
+  "specification": {
+    "path": "D:\\天泽智联\\深圳中外运物流有限公司科技兴安暨智慧园区四期项目\\github生产静态页面\\waiyunpinghu\\华南平台联动业务流程图.sequence.json",
+    "sha256": "57bd77564307af6a026afdfc626f2f3cc6551818088bc1bdc8308d414b22e961",
+    "bytes": 4631
+  },
+  "artifact": {
+    "path": "D:\\天泽智联\\深圳中外运物流有限公司科技兴安暨智慧园区四期项目\\github生产静态页面\\waiyunpinghu\\华南平台联动业务流程图.html",
+    "sha256": "97444a1a479619f60d25a4f7b1fb95b1ebbfbbd6f45edccc7b313ce18f08b2d1",
+    "bytes": 811111
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "fail"
+  },
+  "failedStage": "browser-check",
+  "diagnostics": [
+    {
+      "code": "viewer/browser-check-runtime",
+      "severity": "error",
+      "message": "browser-check could not complete its Chrome inspection.",
+      "subject": {
+        "artifact": "D:\\天泽智联\\深圳中外运物流有限公司科技兴安暨智慧园区四期项目\\github生产静态页面\\waiyunpinghu\\华南平台联动业务流程图.html"
+      },
+      "evidence": {
+        "reason": "Temporary directory ancestor identity is unavailable: C:\\Users\\65170\\AppData\\Local\\Temp"
+      },
+      "supportedFixes": [
+        "resolve the reported Chrome inspection error, then rerun browser-check"
+      ]
+    }
+  ],
+  "diagnosticSummary": {
+    "total": 1,
+    "shown": 1,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "D:\\天泽智联\\深圳中外运物流有限公司科技兴安暨智慧园区四期项目\\github生产静态页面\\waiyunpinghu\\华南平台联动业务流程图.finalize.json",
+    "summaryReceipt": "D:\\天泽智联\\深圳中外运物流有限公司科技兴安暨智慧园区四期项目\\github生产静态页面\\waiyunpinghu\\华南平台联动业务流程图.finalize-summary.json",
+    "browserCheckReceipt": "D:\\天泽智联\\深圳中外运物流有限公司科技兴安暨智慧园区四期项目\\github生产静态页面\\waiyunpinghu\\华南平台联动业务流程图.browser-check.json"
+  },
+  "visualReview": "not-requested",
+  "durationMs": 1563,
+  "browserCheck": {
+    "requested": true,
+    "ran": false
+  }
+}
