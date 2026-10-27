@@ -2,7 +2,8 @@
 from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from urllib.parse import urlsplit
-import json, os, re, threading, tempfile, html, io, zipfile
+import json, os, re, threading, tempfile, html, io, zipfile, sys
+from datetime import datetime
 ROOT=Path(__file__).resolve().parent
 START="<!-- PROTOTYPE_ANNOTATIONS_START -->"
 END="<!-- PROTOTYPE_ANNOTATIONS_END -->"
@@ -19,12 +20,16 @@ def parse(text):
         if not all(isinstance(n.get(k,""),str) for k in ("page","context","title","body")): raise ValueError("invalid text field")
         if len(n.get("body",""))>5000 or len(n.get("title",""))>120: raise ValueError("annotation too long")
     return rows
+def timestamp(value):
+    try:return datetime.fromisoformat(value.replace('Z','+00:00')).timestamp()
+    except (ValueError, AttributeError):return 0
+
 def merge(old, incoming):
     result={n["id"]:n for n in old}
     for n in incoming:
         o=result.get(n["id"])
         if o and (o.get("system") is False or o.get("deleted")) and n.get("system") is True: continue
-        if not o or (n.get("system") is False and o.get("system") is True) or n.get("updatedAt", "")>o.get("updatedAt", ""): result[n["id"]]=n
+        if not o or (n.get("system") is False and o.get("system") is True) or timestamp(n.get("updatedAt", ""))>=timestamp(o.get("updatedAt", "")): result[n["id"]]=n
     return list(result.values())
 def render(rows, previous):
     e=lambda x:html.escape(str(x),quote=True)
@@ -88,11 +93,36 @@ def save(incoming):
             raise
         finally:
             for tmp in staged.values():Path(tmp).unlink(missing_ok=True)
+SOURCE_NAMES=('原型标注.md','原型标注数据.js','原型手工标记.json')
+source_signatures={}
+def sync_sources():
+    global source_signatures
+    with LOCK:
+        signatures={name:(ROOT/name).read_bytes() for name in SOURCE_NAMES if (ROOT/name).exists()}
+        if signatures==source_signatures:return
+        rows=[]
+        for name in sorted(signatures,key=lambda name:(ROOT/name).stat().st_mtime_ns):
+            text=signatures[name].decode('utf-8-sig')
+            if name.endswith('.md'):incoming=parse(text)
+            elif name.endswith('.js'):
+                match=re.fullmatch(r'\s*window\.PROTOTYPE_ANNOTATIONS\s*=\s*(\[.*\])\s*;?\s*',text,re.S)
+                if not match:raise ValueError('原型标注数据.js 必须为 JSON 数组赋值，不执行脚本')
+                incoming=json.loads(match.group(1))
+            else:incoming=json.loads(text)
+            parse(START+'\n```json\n'+json.dumps(incoming,ensure_ascii=False)+'\n```\n'+END)
+            rows=merge(rows,incoming)
+        existing=(ROOT/'原型标注.md').read_text('utf-8-sig')
+        save(existing.split(START,1)[0]+START+'\n```json\n'+json.dumps(rows,ensure_ascii=False)+'\n```\n'+END+existing.split(END,1)[1])
+        source_signatures={name:(ROOT/name).read_bytes() for name in SOURCE_NAMES}
+
 class Handler(SimpleHTTPRequestHandler):
     def __init__(self,*args,**kwargs):super().__init__(*args,directory=str(ROOT),**kwargs)
     def valid_host(self):return self.headers.get('Host') in (f'127.0.0.1:{PORT}',f'localhost:{PORT}')
     def do_GET(self):
         if not self.valid_host():self.send_error(403);return
+        try:sync_sources()
+        except Exception as error:
+            self.send_error(400,'Annotation sync failed: '+str(error));return
         if urlsplit(self.path).path=='/__prototype_annotations':
             with LOCK:text=(ROOT/'原型标注.md').read_text('utf-8')
             payload=json.dumps({'service':'sinotrans-prototype-annotations','text':text},ensure_ascii=False).encode()
@@ -108,6 +138,9 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_response(204);self.end_headers()
         except Exception as error:self.send_error(400,str(error))
 if __name__=='__main__':
-    save((ROOT/'原型标注.md').read_text('utf-8'))
+    sync_sources()
+    if '--sync' in sys.argv:
+        print('已同步原型标注 MD、JS、JSON、HTML 与文件包',flush=True)
+        sys.exit(0)
     print(f'Prototype: http://127.0.0.1:{PORT}/',flush=True)
     ThreadingHTTPServer(('127.0.0.1',PORT),Handler).serve_forever()
