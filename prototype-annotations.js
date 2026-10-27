@@ -74,5 +74,5 @@ document.addEventListener('load',()=>{if(active)requestAnimationFrame(draw)},tru
 window.addEventListener('resize',()=>{if(active)waitForLayout()});document.addEventListener('scroll',()=>{if(active)draw()},true);window.addEventListener('storage',e=>{if(e.key===KEY){try{merge(JSON.parse(e.newValue||'[]'));if(active)render()}catch{}}});window.addEventListener('beforeunload',e=>{if(drafts.size){e.preventDefault();e.returnValue='存在未保存标注'}});
 // Closing the workspace restores the launcher; Alt+A also toggles annotation mode.
 window.PrototypeAnnotations={getAnchor:find,toggle,parse,getRecords:()=>Object.values(notes),getContext:()=>context,persist};
-toggle(sessionStorage.getItem('pa-active')!=='0');
+toggle(false);
 })();
