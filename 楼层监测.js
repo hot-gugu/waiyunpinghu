@@ -18,8 +18,8 @@
   const floorStats=computed(()=>Object.fromEntries(floors.map(f=>{const ds=devicesForFloor(f.id);return [f.id,{offline:ds.filter(d=>d.status==='离线').length,alarms:alarmsForFloor(f.id).filter(r=>['报警中','待复核','待接收','待处置'].includes(r.phase)).length}];})));
   const typeStats=computed(()=>deviceTypes.map(t=>{const ds=devices.value.filter(d=>d.type===t.id);return {...t,total:ds.length,online:ds.filter(d=>d.status!=='离线').length,offline:ds.filter(d=>d.status==='离线').length};}));
   const chooseKind=id=>{kind.value=id;selected.value=null;};
-  const displayPhase=phase=>phase==='待接收'?'待处置':phase;
-  const actionLabel=r=>r.kind==='fire'?null:({'待复核':'复核'}[r.phase]);
+  const displayPhase=phase=>phase;
+  const actionLabel=r=>r.kind==='fire'?null:({'待复核':'复核','待接收':'接收','待处置':'处置'}[r.phase]);
   const locateAlarm=r=>{kind.value='all';selected.value=r.pinId;};
   const visible=computed(()=>devices.value.filter(d=>kind.value==='all'||kind.value===d.type));
   const active=computed(()=>devices.value.find(d=>d.id===selected.value));

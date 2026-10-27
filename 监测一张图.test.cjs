@@ -22,7 +22,7 @@ app.filter.building='warehouse-1';assert(app.devices.value.every(d=>d.buildingId
 const found=app.events.value.find(r=>r.deviceId);app.pickEvent(found);assert.equal(app.selectedDevice.value,found.deviceId);assert(app.events.value.every(r=>r.deviceId===found.deviceId));assert.equal(app.detailMode.value,'event');app.clearDevice();assert.equal(app.selectedDevice.value,null);
 for(const id of ['CASE-MOBILE-DEMO-PENDING-01','CASE-MOBILE-DEMO-DONE-01'])assert(app.events.value.some(r=>r.id===id));
 const pending=app.events.value.find(r=>r.phase==='待复核');app.goAction(pending);assert.equal(app.actionMode.value,'review');assert.equal(app.actionOpen.value,true);assert.equal(context.location.href,'');assert(session.has('park-monitor-view-v1'));
-const process=app.events.value.find(r=>r.phase==='待处置');app.goAction(process);assert.equal(app.actionMode.value,'process');assert.equal(app.actionTarget.value.id,process.id);assert.equal(app.actionLabel(process),undefined);assert.equal(app.actionLabel(pending),'复核');assert.equal(app.actionLabel({kind:'ai',phase:'待接收'}),undefined);assert.equal(context.location.href,'');
+const process=app.events.value.find(r=>r.phase==='待处置');app.goAction(process);assert.equal(app.actionMode.value,'process');assert.equal(app.actionTarget.value.id,process.id);assert.equal(app.actionLabel(process),'处置');assert.equal(app.actionLabel(pending),'复核');assert.equal(app.actionLabel({kind:'ai',phase:'待接收'}),'接收');assert.equal(context.location.href,'');
 const finished=app.events.value.find(r=>r.phase==='已处置');const before=context.location.href;app.goAction(finished);assert.equal(context.location.href,before);
 app.filter.period='all';assert(app.events.value.every(r=>r.time.slice(0,10)===new Date().toLocaleDateString('sv-SE')));
 assert(template.includes('直播流未接入'));assert(template.includes('报警视频片段未接入'));assert(!template.includes('<select'));
@@ -141,7 +141,7 @@ floorWithAlarms.changeFloor('1');assert.equal(floorWithAlarms.floorAlarms.value.
 console.log('PASS: per-type online/offline totals, marker filtering, floor exception badges and current-floor alarm-to-pin links stay consistent across floor switches.');
 
 for(const r of floorWithAlarms.floorAlarms.value){assert.equal(r.kind,'fire');assert.equal(floorWithAlarms.actionLabel(r),null);floorWithAlarms.locateAlarm(r);assert.equal(floorWithAlarms.active.value.id,r.pinId);}
-for(const [phase,label] of [['待复核','复核'],['待接收',undefined],['待处置',undefined]])assert.equal(floorWithAlarms.actionLabel({phase}),label);
+for(const [phase,label] of [['待复核','复核'],['待接收','接收'],['待处置','处置']])assert.equal(floorWithAlarms.actionLabel({phase}),label);
 assert(!context.MonitorFloorView.template.includes('定位设备'));assert(!context.MonitorFloorView.template.includes('<span><i></i>报警</span>'));assert(context.MonitorFloorView.template.includes('@click.stop="$emit(\'action\',r)"'));assert(template.includes('@action="goAction"'));
 console.log('PASS: fire alarms locate without actions, AI alarms reuse phase actions, and device legend contains only online/offline.');
 
@@ -244,4 +244,4 @@ floorWithAlarms.chooseKind('flood');assert.equal(floorWithAlarms.visible.value.l
 const floodAlarm=floorWithAlarms.floorAlarms.value.find(r=>r.type==='水浸报警'&&r.phase==='待处置');floorWithAlarms.locateAlarm(floodAlarm);assert.equal(floorWithAlarms.active.value.id,floodAlarm.pinId);
 console.log('PASS: flood device category/counts/filtering, pending/resolved read-only alarms and pin location on each warehouse floor.');
 
-assert.equal(app.displayPhase('待接收'),'待处置');assert.equal(app.displayPhase('已处置'),'已处置');assert(!app.timeline.value.some(n=>/接收/.test(n.title)));
+assert.equal(app.displayPhase('待接收'),'待接收');assert.equal(app.displayPhase('已处置'),'已处置');assert(!app.timeline.value.some(n=>/接收/.test(n.title)));
