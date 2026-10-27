@@ -48,7 +48,17 @@
 .map-toolbar.overview-filters{top:24px;display:flex;flex-wrap:wrap;justify-content:flex-start;gap:8px;padding:0;background:transparent;border:0;border-radius:0;box-shadow:none;backdrop-filter:none;align-items:center}
 .overview-filters>.n-select{flex:0 0 120px;width:120px;min-width:0}.overview-filters>.n-select:nth-child(2){flex-basis:140px;width:140px}.overview-filters>.n-select:nth-child(3){flex-basis:104px;width:104px}.overview-filters>.n-tree-select{flex:0 0 168px;width:168px;min-width:0}.overview-filters>button{height:36px;width:36px;flex:none;padding:0;border-radius:8px}.overview-filters .n-base-selection{min-height:36px;border-radius:8px;font-size:12px;--n-border:1px solid rgba(8,121,255,.45);--n-border-hover:1px solid #0879ff;--n-border-active:1px solid #0879ff;--n-border-focus:1px solid #0879ff;--n-border-radius:8px;--n-placeholder-color:#84bbff;--n-text-color:#dce8f7}.overview-filters .n-base-selection-label{min-height:36px;background:rgba(14,35,70,.92)}
 .building-pin span{display:flex;align-items:center;gap:8px}.building-pin small{font-size:12px;font-weight:400;color:#ffe2e7;padding-left:8px;border-left:1px solid rgba(255,255,255,.3)}
-.building-pin.has-alarm i{background:#ef2f4f;border-color:#ffb8c4;box-shadow:0 0 0 5px rgba(239,47,79,.2),0 0 18px rgba(239,47,79,.45)}
+/* 报警图标保持清晰，三层空心涟漪交错向外扩散。 */
+.building-pin.has-alarm i{position:relative;background:#ef2f4f;border-color:#ffd4dd;box-shadow:0 3px 12px rgba(7,22,47,.5)}
+.building-pin i{overflow:visible;isolation:isolate}
+.building-pin i::before{position:relative;z-index:2}
+.building-pin i .alarm-wave{display:none;position:absolute;left:50%;top:50%;width:28px;height:28px;margin:-14px;padding:0;border:1px solid rgba(255,133,153,.8);border-radius:50%;pointer-events:none;background:transparent;box-shadow:none;opacity:0;z-index:-1;will-change:transform,opacity}
+.building-pin.alarm-ripple .alarm-wave{display:block;animation:alarmPulse 3s linear infinite}
+.building-pin.alarm-ripple .wave-one{animation-delay:0s}
+.building-pin.alarm-ripple .wave-two{animation-delay:-1s}
+.building-pin.alarm-ripple .wave-three{animation-delay:-2s}
+@keyframes alarmPulse{0%{transform:scale(1);opacity:0}10%{opacity:.8}55%{opacity:.45}100%{transform:scale(3.4);opacity:0}}
+@media (prefers-reduced-motion: reduce){.building-pin.alarm-ripple .alarm-wave{animation:none;display:none}}
 .building-pin.has-alarm span{border-color:rgba(255,133,153,.8)}
 @media(max-width:1250px) and (min-width:761px){.map-toolbar.overview-filters{gap:6px;padding:0}.overview-filters>button{width:30px}.overview-filters .n-base-selection-input__content,.overview-filters .n-base-selection-placeholder{font-size:12px}}
 @media(max-width:760px){.map-toolbar.overview-filters{top:12px;flex-wrap:wrap;padding:0}.overview-filters>.n-select,.overview-filters>.n-select:nth-child(2),.overview-filters>.n-select:nth-child(3){flex:0 0 120px;width:120px}.overview-filters>.n-tree-select{flex:0 0 168px;width:168px}.overview-filters>button{position:relative}.side{top:156px}.building-pin span{gap:5px}.building-pin small{padding-left:5px;font-size:12px}}
@@ -103,11 +113,14 @@
 @media(max-width:760px){.floor-left-column{left:12px;top:90px;bottom:70px;width:205px;overflow:auto;gap:10px}.floor-left-column .floor-device-key{padding:10px}.floor-device-key>button.floor-type-row{padding:9px 7px}.floor-type-row__title{gap:5px}.floor-type-row__stats{margin-left:0;gap:5px}.floor-left-column .floor-device-key__summary>span{margin:0}.floor-alarm-panel{min-height:180px;flex:1 0 180px}.floor-alarm-panel__head{padding:12px}.floor-alarm-panel__head h2{font-size:14px}.floor-switcher{width:88px}.floor-switcher button{min-height:86px}.floor-switcher button small{font-size:12px}.floor-device-popup{right:108px}}
 
 /* 楼层报警点位向外扩散的双层光圈 */
-.floor-device.alarm{overflow:visible}
-.floor-device.alarm::before,.floor-device.alarm::after{content:"";position:absolute;inset:-4px;border:2px solid #ef2f4f;border-radius:50%;background:rgba(239,47,79,.16);pointer-events:none;animation:floor-alarm-ripple 2s ease-out infinite}
-.floor-device.alarm::after{animation-delay:1s}
+.floor-device.alarm{overflow:visible;isolation:isolate;box-shadow:0 3px 12px rgba(7,22,47,.5)}
+.floor-device.alarm .floor-alarm-wave{position:absolute;left:50%;top:50%;width:28px;height:28px;margin:-14px;padding:0;border:1px solid rgba(255,133,153,.8);border-radius:50%;pointer-events:none;background:transparent;box-shadow:none;opacity:0;z-index:-1;will-change:transform,opacity;animation:alarmPulse 3s linear infinite}
+.floor-device.alarm .wave-one{animation-delay:0s}
+.floor-device.alarm .wave-two{animation-delay:-1s}
+.floor-device.alarm .wave-three{animation-delay:-2s}
 .floor-device.alarm>i{position:relative;z-index:1}
-@keyframes floor-alarm-ripple{0%{transform:scale(.85);opacity:.85}75%{opacity:.25}100%{transform:scale(2.4);opacity:0}}
+@media (prefers-reduced-motion: reduce){.floor-device.alarm .floor-alarm-wave{animation:none;display:none}}
+
 .alarm-list .event-head>span:only-child,
 .floor-alarm-row .event-head>span:only-child{margin-left:auto}
 
@@ -216,3 +229,13 @@
 
 /* Flood sensors follow the existing floor fire-device styles. */
 .floor-device.flood{background:#0891b2}.floor-type-row.flood .fa{color:#53cce2}
+
+/* 楼层摄像头本地视频与放大查看。 */
+.floor-camera-player{position:relative;background:#07162f;border-radius:8px;overflow:hidden}
+.floor-camera-player video{display:block;width:100%;aspect-ratio:16/9;object-fit:contain;background:#000}
+.floor-camera-expand{position:absolute;right:8px;top:8px;width:30px;height:30px;padding:0;background:rgba(7,22,47,.8);display:grid;place-items:center}
+.floor-camera-modal{position:fixed;inset:0;z-index:80;background:rgba(2,8,18,.88);display:grid;place-items:center;padding:24px}
+.floor-camera-modal section{width:min(1100px,94vw);background:#10274b;border:1px solid #28496f;border-radius:8px;overflow:hidden}
+.floor-camera-modal header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;gap:12px}
+.floor-camera-modal h2{font-size:16px;font-weight:400}
+.floor-camera-modal video{display:block;width:100%;max-height:80dvh;background:#000}
