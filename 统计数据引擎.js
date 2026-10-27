@@ -22,13 +22,23 @@
     }
     return result;
   };
+  const isFire=r=>!!(r.isFire||window.AlarmSourceRules?.isFire(r));
+  const caseEligible=r=>r.confirmed||isFire(r);
   const load=source=>{
-    if(source==='demo')return demo();
+    if(source==='demo')return [...demo(),...(window.ALARM_DEMO_RECORDS||[]).filter(isFire)];
     const extra=read('global-alarm-center-v1').extra||[],map=new Map((window.ALARM_DEMO_RECORDS||[]).map(r=>[r.id,{...r}]));
     extra.forEach(r=>map.set(r.id,{...r}));const receipts=read('alarm-case-receipts-v1'),disposals=read('alarm-case-disposals-v1');
-    return [...map.values()].filter(AlarmSourceRules.isAI).map(r=>{const p=D.people.find(p=>p.name===r.owner);return {...r,department:p?D.departments.find(d=>d.id===p.departmentId).name:'未分配部门',receipt:receipts[r.id]||null,disposal:disposals[r.id]||null};});
+    return [...map.values()].map(r=>{const p=D.people.find(p=>p.name===r.owner);return {...r,department:p?D.departments.find(d=>d.id===p.departmentId).name:'未分配部门',receipt:receipts[r.id]||null,disposal:disposals[r.id]||null};});
   };
   const normalize=(r,now=Date.now())=>{
+    if(isFire(r)){
+      const end=r.resolvedAt||r.completedAt||r.disposal?.time;
+      const completed=['已处置','已恢复','完成处理','已闭环'].includes(r.alarmStatus||r.fireStatus||r.processingStatus||r.caseStatus);
+      const elapsed=completed?(time(end)-time(r.time))/60000:null;
+      const duration=Number.isFinite(elapsed)&&elapsed>=0?elapsed:null;
+      const late=r.disposalLate===true||r.disposalOverdue===true||r.disposalOverdue==='是'||/^超期/.test(String(r.disposalOverdue||''));
+      return {...r,isFire:true,confirmed:false,received:false,completed,duration,caseStatus:completed?'已闭环':'待处置',reviewLate:false,disposalLate:late};
+    }
     if(r.demo&&time(r.reviewTime)>now)r={...r,status:'待复核',result:'—',reviewTime:'',receipt:null,disposal:null};
     const confirmed=r.status==='已复核'&&r.result==='确认违规',settings=window.AlarmBasicSettings?.get()||{reviewSeconds:300,disposalSeconds:1800};
     const reviewEnd=r.status==='已复核'?time(r.reviewTime):now;
@@ -54,9 +64,10 @@
   };
   const filter=(rows,{range,area,type,level,department}={})=>rows.filter(r=>(!range||(time(r.time)>=range[0]&&time(r.time)<=range[1]))&&(!area||r.area===area)&&(!type||r.type===type)&&(!level||r.level===level)&&(!department||r.department===department));
   const stats=rows=>{
-    const confirmed=rows.filter(r=>r.confirmed),done=confirmed.filter(r=>r.completed),mis=rows.filter(r=>r.status==='已复核'&&r.result==='误报');
-    const planned=rows.filter(r=>r.status==='已复核'&&r.result==='计划内事件'),pending=rows.filter(r=>r.status!=='已复核');
-    return {total:rows.length,confirmed:confirmed.length,mis:mis.length,planned:planned.length,suspected:rows.filter(r=>r.status==='已复核'&&r.result==='疑似').length,pending:pending.length,reviewed:rows.length-pending.length,accuracy:percent(confirmed.length,confirmed.length+mis.length),reviewRate:percent(rows.length-pending.length,rows.length),closed:done.length,closeRate:percent(done.length,confirmed.length),waiting:confirmed.filter(r=>!r.received&&!r.completed).length,processing:confirmed.filter(r=>r.received&&!r.completed).length,reviewLate:rows.filter(r=>r.reviewLate).length,disposalLate:confirmed.filter(r=>r.disposalLate).length,avgMinutes:done.length?Math.round(done.reduce((s,r)=>s+r.duration,0)/done.length):null};
+    const ai=rows.filter(r=>!isFire(r));
+    const confirmed=rows.filter(r=>r.confirmed),done=rows.filter(r=>caseEligible(r)&&r.completed),mis=rows.filter(r=>r.status==='已复核'&&r.result==='误报');
+    const planned=rows.filter(r=>r.status==='已复核'&&r.result==='计划内事件'),pending=rows.filter(r=>!isFire(r)&&r.status!=='已复核');
+    return {total:rows.length,confirmed:confirmed.length,mis:mis.length,planned:planned.length,suspected:rows.filter(r=>r.status==='已复核'&&r.result==='疑似').length,pending:pending.length,reviewed:ai.length-pending.length,accuracy:percent(confirmed.length,confirmed.length+mis.length),reviewRate:percent(ai.length-pending.length,ai.length),closed:done.length,closeRate:percent(done.length,rows.filter(caseEligible).length),waiting:confirmed.filter(r=>!r.received&&!r.completed).length,processing:rows.filter(r=>caseEligible(r)&&!r.completed&&(isFire(r)||r.received)).length,reviewLate:rows.filter(r=>r.reviewLate).length,disposalLate:rows.filter(r=>caseEligible(r)&&r.disposalLate).length,avgMinutes:done.some(r=>Number.isFinite(r.duration))?Math.round(done.filter(r=>Number.isFinite(r.duration)).reduce((s,r)=>s+r.duration,0)/done.filter(r=>Number.isFinite(r.duration)).length):null};
   };
   const groups=(rows,key)=>{
     const map=new Map();rows.forEach(r=>{const value=key==='date'?r.time.slice(0,10):key==='person'?r.disposal?.violator?.replace(/（.*$/,'')||'未登记违规人员':r[key]||'未分配';if(!map.has(value))map.set(value,[]);map.get(value).push(r);});
@@ -82,5 +93,5 @@
     if(s.mis)notes.push('存在 '+s.mis+' 条误报，建议按违规事件类型与场景复查样本、调整识别策略。');
     return notes;
   };
-  window.StatsEngine={D,day,stamp,time,read,percent,fmt,safe,demo,load,normalize,period,completedPeriod,filter,stats,groups,trend,csv,download,insights};
+  window.StatsEngine={isFire,caseEligible,D,day,stamp,time,read,percent,fmt,safe,demo,load,normalize,period,completedPeriod,filter,stats,groups,trend,csv,download,insights};
 })();
