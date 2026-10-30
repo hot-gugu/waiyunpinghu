@@ -48,11 +48,7 @@
 <style>.review-form-scroll{scrollbar-width:none;-ms-overflow-style:none}.review-form-scroll::-webkit-scrollbar{display:none}</style>
 <script src="报警来源规则.js"></script></head>
 <body class="bg-grayBg text-gray-800 h-screen flex flex-col overflow-hidden">
-    <!-- 全局左侧深色主导航（由 navigation.js?v=20260904-4 统一渲染） -->
-    <aside></aside>
-
-    <!-- 主内容容器 -->
-    <div class="flex-1 flex flex-col overflow-hidden">
+    <!-- 全局左侧深色主导航（由 navigation.js?v=20261028-account"flex-1 flex flex-col overflow-hidden">
     <!-- 顶部导航栏 -->
     <header class="bg-white border-b border-grayBorder px-6 py-3 flex items-center justify-between shrink-0">
         <div class="flex items-center gap-3">
@@ -65,7 +61,7 @@
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm">张</div>
                     <span class="text-sm">张安全</span>
-                    <span class="text-xs text-gray-400">监控中心-安全科</span>
+                    <span class="text-xs text-gray-400">安全环保部·安全科</span>
                 </div>
             </div>
         </div>
@@ -115,8 +111,8 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-medium mb-2">报警等级 <span class="text-danger">*</span></label>
-                    <select id="reviewAlarmLevel" class="w-full border border-grayBorder rounded px-3 py-2 text-sm"><option>一级</option><option>二级</option><option>三级</option><option>四级</option></select>
+                    <label for="reviewAlarmLevel" class="block text-sm font-medium mb-2">报警等级</label>
+                    <input id="reviewAlarmLevel" type="text" readonly aria-readonly="true" class="w-full border border-grayBorder rounded px-3 py-2 text-sm bg-gray-50 text-gray-700" />
                 </div>
 
                 
@@ -141,7 +137,7 @@
     </main>
     </div>
 
-    <script src="navigation.js?v=20260904-4"></script>
+    <script src="navigation.js?v=20261028-account"></script>
 <script>
 function styleReviewResult(button, selected) {
  const tone = {'误报':['#d98600','#fff3d9'],'确认违规':['#ef2f4f','#fff4f5'],'计划内事件':['#0879ff','#eef6ff'],'疑似':['#d98600','#fff3d9']}[button.dataset.reviewResult];
@@ -160,7 +156,7 @@ function updateReviewFields(result) {
   const control = document.getElementById(id);
   control.parentElement.classList.toggle('hidden', !isViolation);
   control.disabled = !isViolation;
-  control.required = isViolation;
+  control.required = isViolation && id === 'reviewEventType';
  });
 }
 document.querySelectorAll('[data-review-result]').forEach(button => {
@@ -199,7 +195,6 @@ updateReviewFields(document.querySelector('[data-review-result][aria-pressed="tr
  document.getElementById('reviewEventType').value = record.type;
  const levelControl=document.getElementById('reviewAlarmLevel');
  const levelRules=window.AlarmEventLevels;
- levelControl.replaceChildren(...levelRules.levels.map(level=>{const option=document.createElement('option');option.value=level;option.textContent=level;return option;}));
  levelControl.value=levelRules.level(record.type,record.level,record);
  document.getElementById('reviewEventType').addEventListener('change',event=>{levelControl.value=levelRules.level(event.target.value,record.level,record);});
 
@@ -232,5 +227,5 @@ updateReviewFields(document.querySelector('[data-review-result][aria-pressed="tr
  };
 })();
 </script>
-<script src="超期规则联动.js"></script><script src="监测一张图返回.js"></script><script src="原型标注数据.js"></script><script src="prototype-annotations.js"></script></body>
+<script src="超期规则联动.js"></script><script src="监测一张图返回.js"></script><script src="原型标注数据.js"></script></body>
 </html>

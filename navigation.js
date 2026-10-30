@@ -113,6 +113,11 @@
     style.id = 'unified-navigation-style';
     style.textContent = `
       :root { --unified-topnav-height: 68px; }
+      .page-head-with-account { display:flex !important; align-items:center; justify-content:space-between; }
+      .prototype-account { display:flex; align-items:center; gap:9px; color:#24344d; font:400 14px 'Microsoft YaHei',sans-serif; white-space:nowrap; }
+      .prototype-account-icon { width:28px; height:28px; border-radius:50%; display:grid; place-items:center; color:#8190a5; background:#f1f4f8; }
+      .prototype-account small { display:block; font-size:12px; color:#8190a5; line-height:1.2; }
+
       body.unified-topnav-page {
         padding-top: var(--unified-topnav-height) !important;
         min-width: 1080px;
@@ -431,6 +436,16 @@
     injectStyle();
     if (document.querySelector('.unified-topnav')) return;
     document.body.classList.add('unified-topnav-page');
+    const pageHead = document.querySelector('.page-head');
+    if (pageHead && !pageHead.querySelector('.prototype-account')) {
+      pageHead.classList.add('page-head-with-account');
+      const account = document.createElement('div');
+      account.className = 'prototype-account';
+      account.setAttribute('aria-label', '当前登录账户：张安全，安全环保部·安全科');
+      account.innerHTML = '<span class="prototype-account-icon" aria-hidden="true"><i class="fa fa-user"></i></span><span>张安全<small>安全环保部·安全科</small></span>';
+      pageHead.appendChild(account);
+    }
+
     const header = document.createElement('header');
     header.className = 'unified-topnav';
     header.setAttribute('aria-label', '平台总导航');

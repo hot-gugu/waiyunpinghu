@@ -30,3 +30,6 @@
 @media(max-width:900px){.st-ai-conclusion{grid-template-columns:1fr;padding:18px}.st-ai-evidence{border-left:0;border-top:1px solid #e7eef8;padding:16px 0 0}.st-ai-strategies{grid-template-columns:1fr}.st-donut-layout{grid-template-columns:minmax(140px,.9fr) 1fr}.st-donut-legend{display:flex}.st-type-rank{gap:8px;grid-template-columns:22px minmax(90px,1fr) 40px 66px}.st-ai-heading{align-items:flex-start}}
 
 .st-field-hint{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;margin-left:5px;vertical-align:middle;color:#8190a5;font-size:14px;font-weight:400;cursor:help;flex:none;line-height:1}.st-field-hint:hover,.st-field-hint:focus-visible{color:#0879ff;outline:1px solid #a9c9ff;outline-offset:2px;border-radius:50%}.st-metric-label .st-field-hint{margin-left:0}.st-donut-label{gap:5px}
+
+/* 报表时间段、报表切换与筛选依次排列。 */
+.st-time-row{display:flex;align-items:center;min-height:42px}.st-time-row .st-filter-top{width:100%}.st-time-row .st-time-controls{width:100%}.st-time-row .st-aux{margin-left:auto}.st-filter{padding-top:14px}

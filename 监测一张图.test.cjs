@@ -82,7 +82,7 @@ pendingOffice.phase='已处置';assert.equal(app.pendingAlarms(office),1);pendin
 assert(template.includes('待处理报警：'));assert(template.includes("'has-alarm':pendingAlarms(b)>0"));assert(template.includes("'alarm-ripple':pendingAlarms(b)>0&&['warehouse-1','office','warehouse-3'].includes(b.id)"));
 const markerCss=fs.readFileSync(__dirname+'/监测一张图.css','utf8');assert(template.includes('fa fa-building-o"><span class="alarm-wave wave-one"'));assert(markerCss.includes('.building-pin.alarm-ripple .wave-one'));assert(markerCss.includes('.building-pin.alarm-ripple .wave-two'));assert(markerCss.includes('@media (prefers-reduced-motion: reduce){.building-pin.alarm-ripple'));assert(!markerCss.includes('.building-pin.alarm-ripple i::before'));
 assert(!template.includes('class="metrics"'));assert(!template.includes('class="filter-scroll"'));
-assert(template.includes('overview-filters'));assert(template.includes('n-tree-select'));
+assert(template.includes('alarm-scope-filter'));assert(template.includes('n-tree-select'));assert(template.includes('收起左侧概览'));assert(template.includes('收起右侧报警'));assert(!template.includes('暂停滚动')); 
 assert(app.scopeOptions.every(b=>b.children.length&&b.children.every(f=>f.key&&f.label)));
 console.log('PASS: office has 3 distinct types/states; pending counts exclude resolved alarms; filters moved and four top cards removed.');
 

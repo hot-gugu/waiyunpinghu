@@ -116,18 +116,13 @@
                 <span class="text-textMain font-medium">区域配置</span>
             </div>
             <div class="flex items-center gap-6">
-                <div class="relative cursor-pointer">
-                    <i class="fa fa-bell-o text-textSecondary text-lg"></i>
-                    <span
-                        class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-[10px] flex items-center justify-center">17</span>
-                </div>
                 <div class="flex items-center gap-2 cursor-pointer">
                     <div class="w-8 h-8 rounded-full bg-bgPage flex items-center justify-center text-textSecondary">
                         <i class="fa fa-user"></i>
                     </div>
                     <div class="text-sm">
                         <div class="text-textMain">张安全</div>
-                        <div class="text-[11px] text-textLight">安全管理员</div>
+                        <div class="text-[11px] text-textLight">安全环保部·安全科</div>
                     </div>
                 </div>
             </div>
@@ -884,37 +879,6 @@
                 if (countButton) openDeviceDrawer(countButton.closest('tr'));
             });
 
-            const toolbar = addRootButton.parentElement;
-            const autoButton = d.createElement('button');
-            autoButton.id = 'autoAssociateButton';
-            autoButton.className = 'bg-primary text-white px-4 py-2 radius-sm flex items-center gap-2 text-sm transition-figma hover:bg-[#065fd4] disabled:opacity-70';
-            autoButton.innerHTML = '<i class="fa fa-link"></i><span>自动关联设备</span>';
-            toolbar.appendChild(autoButton);
-            const toast = d.createElement('div');
-            toast.className = 'fixed top-20 left-1/2 -translate-x-1/2 z-[100] hidden bg-white border border-emerald-200 shadow-lg rounded-lg px-5 py-3 text-sm text-emerald-600';
-            toast.innerHTML = '<i class="fa fa-check-circle mr-2"></i>自动关联摄像头成功';
-            d.body.appendChild(toast);
-            autoButton.onclick = () => {
-                autoButton.disabled = true;
-                autoButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i><span>自动关联中...</span>';
-                setTimeout(() => {
-                    [...tableBody.rows].filter(row => cellText(row, 2) === '三级').forEach((row, index) => {
-                        const devices = rowDevices.get(row) || [];
-                        if (!devices.length) {
-                            setCameraSummary(row, [
-                                { name: `${cellText(row, 1)}固定摄像头`, type: '固定', code: `CAM-${String(index + 11).padStart(3, '0')}` },
-                                { name: `${cellText(row, 1)}移动布控球`, type: '移动', code: `MBQJ-${String(index + 11).padStart(3, '0')}` },
-                                { name: `${cellText(row, 1)}执法记录仪`, type: '执法', code: `ZFJ-${String(index + 11).padStart(3, '0')}` }
-                            ]);
-                        }
-                    });
-                    autoButton.disabled = false;
-                    autoButton.innerHTML = '<i class="fa fa-link"></i><span>自动关联设备</span>';
-                    toast.classList.remove('hidden');
-                    setTimeout(() => toast.classList.add('hidden'), 2200);
-                }, 1000);
-            };
-
             const divisionModal = d.getElementById('gisModal');
             const divisionMap = d.getElementById('gisMap');
             const divisionTitle = divisionModal.querySelector('h3');
@@ -1107,7 +1071,7 @@
         })();
     </script>
     <script src="区域配置-表单规则.js"></script>
-    <script src="navigation.js?v=20261023-area-config"></script>
+    <script src="navigation.js?v=20261028-account"></script>
 
 </body>
 

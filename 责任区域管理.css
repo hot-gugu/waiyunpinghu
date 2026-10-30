@@ -8,3 +8,5 @@
 .ra-import-scroll{max-height:360px;overflow:auto;border:1px solid var(--ra-border);border-radius:8px}.ra-import-scroll .ra-table{min-width:700px}.ra-import-scroll td{vertical-align:top;max-width:280px;overflow-wrap:anywhere}.ra-import-valid{color:#12a36a}.ra-import-invalid{color:#ef2f4f}.ra-people-head .ra-search{margin-left:auto}
 
 .ra-scope-editor .n-drawer-footer{justify-content:center}
+
+.ra-main-toolbar{display:flex;justify-content:flex-end;align-self:stretch;width:100%;flex:none}.ra-main-toolbar>.n-button{margin-left:auto}
