@@ -64,12 +64,13 @@
     const tone = {'一级':'1','二级':'2','三级':'3','四级':'4'}[r.level] || 'unknown';
     return `<span class="gac-level gac-level--${tone}">${esc(r.level || '未分级')}</span>`;
   };
-  const content = r => `<div class="gac-event-heading"><h3>${esc(r.type)}</h3><span class="gac-tag">待复核</span></div><p>报警等级：${levelBadge(r)}</p><p>报警时间：${esc(r.time)}</p><p>设备：${esc(r.device)}</p><p>责任区域：${esc(r.area)}</p>${actions(r)}`;
+  const processingStatus=r=>{let done;try{done=JSON.parse(localStorage.getItem('alarm-case-disposals-v1')||'{}')?.[r.id];}catch{}const raw=(done?.localCompleted?done.status:null)||r.processingStatus||r.handleStatus||r.caseStatus||r.disposal?.status||done?.status;const aliases={'未处理':'待处理','待接收':'待处理','待处置':'待处理','待处理':'待处理','已处置':'完成处理','已处理':'完成处理'};return ['完成处理','无需处理','先期处理'].includes(raw)?raw:aliases[raw]||(done?'完成处理':'待处理');};
+  const content = r => `<div class="gac-event-heading"><h3>${esc(({'货架区未佩戴安全帽':'未佩戴安全帽','仓库人员未穿反光衣':'未穿反光衣'}[r.type]||r.type))}</h3><span class="gac-tag" style="${processingStatus(r)==='完成处理'?'color:#12a36a;background:#e8fbf4':processingStatus(r)==='无需处理'?'color:#8190a5;background:#fafbfd':processingStatus(r)==='先期处理'?'color:#0879ff;background:#eef6ff':''}">${esc(processingStatus(r))}</span></div><p>设备名称：${esc(r.device||'—')}</p><p>设备位置：${esc(r.deviceLocation||r.location||r.area||'—')}</p><p>责任区域：${esc(r.area||'—')}</p><p>报警时间：${esc(r.time||'—')}</p><p>置信度：${esc(r.confidence||'—')}</p>${actions(r)}`;
   function render() {
     const list = pending();
-    const toastMarkup = notices.map(notice => `<section class="gac-toast" role="status" aria-live="polite" data-notice="${notice.token}"><header class="gac-head"><span style="color:#0879ff">新报警提醒</span><div class="gac-head-tools"><button class="gac-more" data-open-drawer title="查看全部待复核(${list.length})" aria-label="查看全部待复核(${list.length})">待复核(${list.length}...)</button><button data-minimize="${notice.token}" aria-label="关闭报警提醒">×</button></div></header><div class="gac-body">${content(notice.record)}</div></section>`).join('');
-    const drawerMarkup = `<div class="gac-mask" data-close-drawer></div><section class="gac-drawer" role="dialog" aria-modal="true" aria-label="待复核报警"><header class="gac-head"><span>待复核报警(${list.length})</span><button data-close-drawer aria-label="关闭待复核抽屉">×</button></header><div class="gac-list">${list.map(r => `<article class="gac-item gac-body">${content(r)}</article>`).join('') || '<div class="gac-empty"><div style="font-size:36px;margin-bottom:16px">✓</div>暂无待复核报警</div>'}</div></section>`;
-    const dockMarkup = `<button class="gac-dock" data-open-drawer aria-label="待复核${list.length}条，打开报警抽屉"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span>待复核 ${list.length}</span></button>`;
+    const toastMarkup = notices.map(notice => `<section class="gac-toast" role="status" aria-live="polite" data-notice="${notice.token}"><header class="gac-head"><span style="color:#0879ff">新报警提醒</span><div class="gac-head-tools"><button class="gac-more" data-open-drawer title="查看报警信息(${list.length})" aria-label="查看报警信息(${list.length})">报警信息(${list.length}...)</button><button data-minimize="${notice.token}" aria-label="关闭报警提醒">×</button></div></header><div class="gac-body">${content(notice.record)}</div></section>`).join('');
+    const drawerMarkup = `<div class="gac-mask" data-close-drawer></div><section class="gac-drawer" role="dialog" aria-modal="true" aria-label="报警信息"><header class="gac-head"><span>报警信息(${list.length})</span><button data-close-drawer aria-label="关闭报警信息">×</button></header><div class="gac-list">${list.map(r => `<article class="gac-item gac-body">${content(r)}</article>`).join('') || '<div class="gac-empty"><div style="font-size:36px;margin-bottom:16px">✓</div>暂无报警信息</div>'}</div></section>`;
+    const dockMarkup = `<button class="gac-dock" data-open-drawer aria-label="报警信息${list.length}条，打开报警抽屉"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span>报警信息 ${list.length}</span></button>`;
     root.innerHTML = drawerOpen ? drawerMarkup : notices.length ? `<div class="gac-stack" aria-label="新报警提醒列表">${toastMarkup}</div>` : dockMarkup;
   }
   root.addEventListener('click', event => {
@@ -89,7 +90,7 @@
   }
   window.GlobalAlarmCenter = {receive, open:() => {drawerOpen=true;render();}, getPending:() => pending().map(r=>({...r}))};
   window.addEventListener('alarm:received', event => receive(event.detail));
-  window.addEventListener('storage', event => {if(event.key===key){state=load(); merge();render();}});
+  window.addEventListener('storage', event => {if(event.key===key){state=load(); merge();render();}else if(event.key==='alarm-case-disposals-v1'){render();}});
   function merge(){ const map = new Map((window.ALARM_DEMO_RECORDS || []).map(r=>[r.id,r])); (state.extra || []).forEach(r=>map.set(r.id,r));records=Array.from(map.values()).filter(r=>!isFire(r)).sort((a,b)=>b.time.localeCompare(a.time)); }
   function init(){ merge();
     const requested = new URLSearchParams(location.search).get('alarmId');

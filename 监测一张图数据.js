@@ -15,5 +15,8 @@
  const unfinished=s=>['待复核','待接收','待处置'].includes(s);
  const sort=(a,b)=>Number(unfinished(b.phase))-Number(unfinished(a.phase))||(unfinished(a.phase)&&unfinished(b.phase)&&!isFire(a)&&!isFire(b)?['一级','二级','三级','四级'].indexOf(a.level)-['一级','二级','三级','四级'].indexOf(b.level):0)||b.time.localeCompare(a.time)||a.id.localeCompare(b.id);
  const locate=r=>devices.find(d=>d.id===(r.deviceId||legacy[r.device]));
- window.MonitorData={devices,legacy,isFire,fireName,phase,unfinished,sort,locate};
+ const alarmDeviceType=r=>{const d=locate(r),configured=r.deviceType||d?.deviceType;if(configured&&!['监测主机','消防监测主机','环境监测'].includes(configured))return configured;const text=[r.type,r.device,d?.name].filter(Boolean).join(' ');return /水浸/.test(text)?'水浸监测装置':/水压|消防通道堵塞/.test(text)?'水压监测装置':/电气|剩余电流|焰火/.test(text)?'独立式电气火灾监控探测器':/烟感|烟雾|感烟/.test(text)?'点型感烟火灾探测器':r.device||d?.name||'物联网设备';};
+ const alarmTitle=r=>isFire(r)?alarmDeviceType(r)+'报警':({'货架区未佩戴安全帽':'未佩戴安全帽','仓库人员未穿反光衣':'未穿反光衣'}[r.type]||r.type);
+ const alarmCategory=r=>{const categories=['故障','动作','火警','疑似真警','离线','预警','隐患'],raw=r.alarmCategory||r.alarmType||r.eventCategory;return categories.includes(raw)?raw:categories.includes(r.type)?r.type:/离线/.test(r.type)?'离线':/故障/.test(r.type)?'故障':/火警/.test(r.type)?'火警':/水浸/.test(r.type)?'隐患':'预警';};
+ window.MonitorData={alarmDeviceType,alarmTitle,alarmCategory,devices,legacy,isFire,fireName,phase,unfinished,sort,locate};
 })();

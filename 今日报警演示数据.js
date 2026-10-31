@@ -45,7 +45,7 @@ if(window.AlarmEventLevels)window.ALARM_DEMO_RECORDS.forEach(record=>record.leve
  ];
  fireCases.forEach(item=>{
   if(window.ALARM_DEMO_RECORDS.some(r=>r.id===item.id))return;
-  window.ALARM_DEMO_RECORDS.push({...item,id:item.id,deviceId:'fire-'+item.buildingId,time:stamp(item.time),reviewTime:item.reviewTime==='—'?'—':stamp(item.reviewTime),remark:item.status==='已复核'?'经消防主机复核，确认现场报警属实。':'',overdue:'否',overdueSeconds:0,misreportType:''});
+  window.ALARM_DEMO_RECORDS.push({...item,deviceType:({'烟雾报警':'点型感烟火灾探测器','焰火报警':'独立式电气火灾监控探测器','消防水压偏低':'水压监测装置','消防通道堵塞':'水压监测装置'}[item.type]),id:item.id,deviceId:'fire-'+item.buildingId,time:stamp(item.time),reviewTime:item.reviewTime==='—'?'—':stamp(item.reviewTime),remark:item.status==='已复核'?'经消防主机复核，确认现场报警属实。':'',overdue:'否',overdueSeconds:0,misreportType:''});
  });
  if(window.AlarmEventLevels)window.ALARM_DEMO_RECORDS.filter(r=>r.id.startsWith('FIRE-DEMO-')).forEach(r=>r.level=window.AlarmEventLevels.level(r.type,r.level,r));
  // Preset receive / disposal state for the accepted and finished fire cases.

@@ -57,8 +57,9 @@ for(const b of app.buildingMarkers.value){
  assert.equal(summary.fire+summary.camera,ds.length);
  assert.equal(summary.fireOnline+summary.cameraOnline,ds.filter(d=>d.online).length);
  assert.equal(summary.total,alarms.length);
- assert.equal(summary.verify,alarms.filter(r=>r.phase==='待复核').length);
- assert.equal(summary.process,alarms.filter(r=>['待接收','待处置'].includes(r.phase)).length);
+ assert.equal(summary.pending,alarms.filter(r=>!['已处置','完成处理','无需处理'].includes(app.listStatus(r))).length);
+ assert.equal(summary.handled,alarms.filter(r=>['已处置','完成处理','无需处理'].includes(app.listStatus(r))).length);
+ assert.equal(summary.pending+summary.handled,summary.total);
  assert.equal(app.detailMode.value,null);assert.equal(app.selectedDevice.value,null);
 }
 assert.equal(app.buildingMarkers.value.reduce((n,b)=>n+app.siteDevices(b).length,0),M.devices.length);
@@ -71,8 +72,9 @@ console.log('PASS: full-screen map cover, building-only markers, exact device pa
 app.reset();const office=app.buildingMarkers.value.find(b=>b.id==='office');
 app.pickBuilding(office);
 assert.equal(app.buildingSummary.value.total,3);
-assert.equal(app.buildingSummary.value.verify,1);
-assert.equal(app.buildingSummary.value.process,1);
+assert.equal(app.buildingSummary.value.pending,2);
+assert.equal(app.buildingSummary.value.handled,1);
+assert.equal(app.buildingSummary.value.pending+app.buildingSummary.value.handled,app.buildingSummary.value.total);
 assert.equal(new Set(app.buildingSummary.value.events.map(r=>r.type)).size,3);
 assert.deepEqual([...new Set(app.buildingSummary.value.events.map(r=>r.phase))].sort(),['已处置','待复核','待处置'].sort());
 assert.equal(app.pendingAlarms(office),2);
@@ -88,11 +90,11 @@ console.log('PASS: office has 3 distinct types/states; pending counts exclude re
 
 app.reset();assert.equal(app.events.value.length,app.overview.value.total);
 const fullCount=app.overview.value.total;
-app.chooseAlarmStage('verify');assert.equal(app.events.value.length,app.overview.value.verify);assert(app.events.value.every(r=>r.phase==='待复核'));assert.equal(app.overview.value.total,fullCount);
-app.chooseAlarmStage('process');assert.equal(app.events.value.length,app.overview.value.process);assert(app.events.value.every(r=>['待接收','待处置'].includes(r.phase)));
+app.chooseAlarmStage('pending');assert.equal(app.events.value.length,app.overview.value.pending);assert(app.events.value.every(r=>!['已处置','完成处理','无需处理'].includes(app.listStatus(r))));assert.equal(app.overview.value.total,fullCount);
+app.chooseAlarmStage('handled');assert.equal(app.events.value.length,app.overview.value.handled);assert(app.events.value.every(r=>['已处置','完成处理','无需处理'].includes(app.listStatus(r))));assert.equal(app.overview.value.pending+app.overview.value.handled,fullCount);
 app.chooseAlarmStage('all');assert.equal(app.events.value.length,fullCount);
 app.filter.building='support';assert.equal(app.overview.value.total,3);assert.equal(app.events.value.length,3);
-app.chooseAlarmStage('verify');assert.equal(app.events.value.length,1);assert.equal(app.overview.value.total,3);
+app.chooseAlarmStage('pending');assert.equal(app.events.value.length,2);assert.equal(app.overview.value.total,3);
 app.reset();assert.equal(app.alarmStage.value,'all');
 assert(template.includes('今日报警事件'));assert(template.includes('alarm-stat-cards'));
 for(const removed of ['class="side left-side"','class="bottom-summary"','class="legend"','全部历史','自定义'])assert(!template.includes(removed),removed);
@@ -124,7 +126,7 @@ vm.runInContext(fs.readFileSync(__dirname+'/楼层监测.js','utf8'),context,{fi
 const officeFloor=context.MonitorFloorView.setup({building:{id:'office',name:'办公楼'}});
 assert.equal(officeFloor.floors.length,3);assert.equal(officeFloor.floor.value,'3');assert.equal(officeFloor.devices.value.length,12);
 assert.equal(new Set(officeFloor.devices.value.map(d=>d.type)).size,4);
-const originalFloorIds=officeFloor.devices.value.map(d=>d.id);officeFloor.selected.value=originalFloorIds[0];officeFloor.changeFloor('2');assert.equal(officeFloor.currentFloor.value.label,'二层');assert.equal(officeFloor.selected.value,null);assert(officeFloor.devices.value.every(d=>!originalFloorIds.includes(d.id)));assert(officeFloor.devices.value.some(d=>d.status==='报警'));
+const originalFloorIds=officeFloor.devices.value.map(d=>d.id);officeFloor.selected.value=originalFloorIds[0];officeFloor.changeFloor('2');assert.equal(officeFloor.currentFloor.value.label,'二层');assert.equal(officeFloor.selected.value,null);assert(officeFloor.devices.value.every(d=>!originalFloorIds.includes(d.id)));assert(!officeFloor.devices.value.some(d=>d.status==='报警'));
 officeFloor.kind.value='water';assert.equal(officeFloor.visible.value.length,2);assert(officeFloor.visible.value.every(d=>d.type==='water'));
 officeFloor.zoomBy(100);officeFloor.resetView();assert.equal(officeFloor.pointStyle(officeFloor.devices.value[0]).left.includes('NaN'),false);
 const warehouseFloor=context.MonitorFloorView.setup({building:{id:'warehouse-1',name:'1号仓库'}});assert.equal(warehouseFloor.floors.length,4);warehouseFloor.changeFloor('roof');assert.equal(warehouseFloor.rooms.value[0].name,'消防水箱间');
@@ -133,33 +135,48 @@ assert(template.includes('查看详情'));assert(template.includes('monitor-floo
 console.log('PASS: building detail navigation, office/warehouse floor switching, distinct device IDs, four device types, filtering and view reset.');
 
 const floorWithAlarms=context.MonitorFloorView.setup({building:{id:'office',name:'办公楼'},alarms:app.siteAlarms(app.buildingMarkers.value.find(b=>b.id==='office'))});
-assert.equal(floorWithAlarms.floorAlarms.value.length,9);assert.equal(floorWithAlarms.floorStats.value['3'].alarms,5);assert.equal(floorWithAlarms.floorStats.value['3'].offline,1);
-assert.equal(floorWithAlarms.floorStats.value['1'].offline,0);assert.equal(floorWithAlarms.floorStats.value['2'].offline,2);assert.equal(floorWithAlarms.floorStats.value['2'].alarms,3);
+assert.equal(floorWithAlarms.floorAlarms.value.length,3);assert.equal(floorWithAlarms.floorStats.value['3'].alarms,2);assert.equal(floorWithAlarms.floorStats.value['3'].offline,1);
+assert.equal(floorWithAlarms.floorStats.value['1'].offline,0);assert.equal(floorWithAlarms.floorStats.value['2'].offline,2);assert.equal(floorWithAlarms.floorStats.value['2'].alarms,0);
 for(const group of floorWithAlarms.typeStats.value)assert.equal(group.total,group.online+group.offline);
 const firstAlarm=floorWithAlarms.floorAlarms.value[0];floorWithAlarms.chooseKind('water');floorWithAlarms.locateAlarm(firstAlarm);assert.equal(floorWithAlarms.kind.value,'all');assert.equal(floorWithAlarms.active.value.id,firstAlarm.pinId);assert.equal(floorWithAlarms.active.value.status,'报警');
 floorWithAlarms.chooseKind('camera');assert.equal(floorWithAlarms.selected.value,null);assert(floorWithAlarms.visible.value.every(d=>d.type==='camera'));assert.equal(floorWithAlarms.visible.value.length,4);
-floorWithAlarms.changeFloor('2');assert.equal(floorWithAlarms.floorAlarms.value.length,6);assert.equal(floorWithAlarms.floorAlarms.value[0].type,'水浸报警');assert(floorWithAlarms.devices.value.some(d=>d.id===floorWithAlarms.floorAlarms.value[0].pinId&&d.status==='报警'));
-floorWithAlarms.changeFloor('1');assert.equal(floorWithAlarms.floorAlarms.value.length,6);
+floorWithAlarms.changeFloor('2');assert.equal(floorWithAlarms.floorAlarms.value.length,0);
+floorWithAlarms.changeFloor('1');assert.equal(floorWithAlarms.floorAlarms.value.length,0);
 console.log('PASS: per-type online/offline totals, marker filtering, floor exception badges and current-floor alarm-to-pin links stay consistent across floor switches.');
 
 for(const r of floorWithAlarms.floorAlarms.value){assert.equal(r.kind,'fire');assert.equal(floorWithAlarms.actionLabel(r),null);floorWithAlarms.locateAlarm(r);assert.equal(floorWithAlarms.active.value.id,r.pinId);}
 for(const [phase,label] of [['待复核','复核'],['待接收','接收'],['待处置','处置']])assert.equal(floorWithAlarms.actionLabel({phase}),label);
-assert(!context.MonitorFloorView.template.includes('定位设备'));assert(!context.MonitorFloorView.template.includes('<span><i></i>报警</span>'));assert(context.MonitorFloorView.template.includes('@click.stop="$emit(\'action\',r)"'));assert(template.includes('@action="goAction"'));
+assert(!context.MonitorFloorView.template.includes('定位设备'));assert(!context.MonitorFloorView.template.includes('<span><i></i>报警</span>'));assert(!context.MonitorFloorView.template.includes('@click.stop="$emit(\'action\',r)"'));assert(template.includes('@action="goAction"'));
 console.log('PASS: fire alarms locate without actions, AI alarms reuse phase actions, and device legend contains only online/offline.');
 
-const fireRows=floorWithAlarms.floorAlarms.value.filter(r=>r.kind==='fire');
-assert(fireRows.some(r=>r.phase==='待处置'));assert(fireRows.some(r=>r.phase==='已处置'));
-for(const r of fireRows){assert(r.deviceId&&r.area);assert.equal(r.level,null);assert(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(r.time));if(r.phase==='已处置'){assert(r.resolvedAt&&r.resolution);assert.equal(floorWithAlarms.devices.value.find(d=>d.id===r.pinId).status,'在线');}}
-assert.equal(floorWithAlarms.floorStats.value['1'].alarms,fireRows.filter(r=>r.phase==='待处置').length);
-assert(context.MonitorFloorView.template.includes('{{r.time}}'));assert(!context.MonitorFloorView.template.includes('r.time.slice(11,19)'));assert(context.MonitorFloorView.template.includes('levelTone(r.level)'));assert(context.MonitorFloorView.template.includes('置信度'));assert(template.includes('@detail="pickEvent"'));
-console.log('PASS: full alarm fields and detail routes, fire resolved history, active-only badges and restored online devices.');
+// Every overview record must appear exactly once across its building's floors.
+app.reset();
+const covered=[];
+for(const site of app.buildingMarkers.value){
+ const source=app.siteAlarms(site),model=context.MonitorFloorView.setup({building:site,alarms:app.records.value});
+ const rows=model.floors.flatMap(f=>model.alarmsForFloor(f.id));
+ assert.deepEqual(Array.from(rows,r=>r.id).sort(),Array.from(source,r=>r.id).sort(),site.name+' record coverage');
+ for(const r of rows){
+  const original=source.find(item=>item.id===r.id);assert(original);
+  for(const key of ['type','time','deviceId','phase','area'])assert.equal(r[key],original[key]);
+  assert.equal(model.floorAlarmTitle(r),app.listAlarmTitle(original));
+  assert.equal(model.floorAlarmCategory(r),app.listAlarmCategory(original));
+  assert.equal(model.floorRecordStatus(r),app.listStatus(original));
+  const f=model.floors.find(f=>model.alarmsForFloor(f.id).some(item=>item.id===r.id));
+  assert(model.devicesForFloor(f.id).some(d=>d.id===r.pinId));covered.push(r.id);
+ }
+}
+assert.equal(new Set(covered).size,covered.length,'no cross-floor duplicates');
+assert.deepEqual(covered.sort(),Array.from(app.events.value,r=>r.id).sort(),'overview and all floors contain the same records');
+assert(context.MonitorFloorView.template.includes('{{r.time}}'));assert(template.includes('@detail="pickEvent"'));
+console.log('PASS: exact overview/floor record IDs, counts, dictionary titles, categories, handling states and pin coverage for every building.');
 
 // Every workflow state must expose the same fields as its source detail page.
 app.reset();
 for(const phase of ['待复核','误报','计划内事件','待接收','待处置','已处置']){
  const record=app.records.value.find(r=>r.phase===phase);assert(record,'missing '+phase);app.pickEvent(record);
  assert.equal(app.isCaseDetail.value,['待接收','待处置','已处置'].includes(phase));
- assert.deepEqual(Array.from(app.info.value,p=>p[0]),['报警ID','违规事件类型','报警时间','设备名称','置信度','报警等级','责任区域','处置人（责任人）','复核超期']);
+ assert.deepEqual(Array.from(app.info.value,p=>p[0]),['设备名称','设备位置','责任区域','报警时间','置信度']);
  if(phase==='待复核')assert.equal(app.reviewFields.value.length,0);
  if(phase==='误报')assert(app.reviewFields.value.some(([k])=>k==='误报类型'));
  if(phase==='计划内事件')assert(!app.reviewFields.value.some(([k])=>k==='误报类型'||k==='报警等级'));
@@ -237,13 +254,17 @@ console.log('PASS: personnel picker confirmation/cancellation, organization/name
 assert(template.includes('<n-config-provider abstract :theme="null"'),"personnel modal provider must not create a full-height screen flex item");
 
 for(const floorId of ['1','2','3']){
- const ds=floorWithAlarms.devicesForFloor(floorId),flood=ds.filter(d=>d.type==='flood');assert.equal(flood.length,2);assert(flood.every(d=>d.fullType==='水浸监测装置'));
- const alarms=floorWithAlarms.alarmsForFloor(floorId).filter(r=>r.type==='水浸报警');assert.equal(alarms.filter(r=>r.phase==='待处置').length,1);assert.equal(alarms.filter(r=>r.phase==='已处置').length,1);
- assert(alarms.every(r=>r.kind==='fire'&&r.level===null&&flood.some(d=>d.id===r.pinId)&&!floorWithAlarms.actionLabel(r)));
- assert.equal(ds.length,12);
+ const ds=floorWithAlarms.devicesForFloor(floorId),flood=ds.filter(d=>d.type==='flood');assert.equal(flood.length,2);assert(flood.every(d=>d.fullType==='水浸监测装置'));assert.equal(ds.length,12);
+ assert(floorWithAlarms.alarmsForFloor(floorId).every(r=>app.records.value.some(item=>item.id===r.id)),'no floor-only generated alarms');
 }
-floorWithAlarms.chooseKind('flood');assert.equal(floorWithAlarms.visible.value.length,2);assert(floorWithAlarms.visible.value.every(d=>d.type==='flood'));
-const floodAlarm=floorWithAlarms.floorAlarms.value.find(r=>r.type==='水浸报警'&&r.phase==='待处置');floorWithAlarms.locateAlarm(floodAlarm);assert.equal(floorWithAlarms.active.value.id,floodAlarm.pinId);
-console.log('PASS: flood device category/counts/filtering, pending/resolved read-only alarms and pin location on each warehouse floor.');
+floorWithAlarms.chooseKind('flood');assert.equal(floorWithAlarms.visible.value.length,2);
+// More than four camera sources on one floor must never drop records.
+const extraCamera={...M.devices.find(d=>d.kind==='ai'&&d.floorId==='warehouse-1-f1'),id:'video-coverage-fifth'};M.devices.push(extraCamera);
+const cameraSources=M.devices.filter(d=>d.kind==='ai'&&d.floorId==='warehouse-1-f1');assert(cameraSources.length>4);
+const cameraFixtures=cameraSources.map((d,i)=>({id:'COVERAGE-'+i,kind:'ai',deviceId:d.id,type:'货架区未佩戴安全帽',time:fixtureNow.toLocaleDateString('sv-SE')+' 10:00:00',phase:'待处置'}));
+const coverageFloor=context.MonitorFloorView.setup({building:{id:'warehouse-1',name:'1号仓库'},alarms:cameraFixtures});
+assert.equal(coverageFloor.alarmsForFloor('1').length,cameraFixtures.length);
+M.devices.splice(M.devices.indexOf(extraCamera),1);
+console.log('PASS: device category filters preserved; floor-only fixtures removed; every camera record retained.');
 
 assert.equal(app.displayPhase('待接收'),'待接收');assert.equal(app.displayPhase('已处置'),'已处置');assert(!app.timeline.value.some(n=>/接收/.test(n.title)));

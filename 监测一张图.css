@@ -256,3 +256,69 @@
 @media(max-width:760px){.panel-edge-toggle--left{left:258px}.panel-edge-toggle--right{right:302px}.body-grid.left-off .panel-edge-toggle--left{left:0}.body-grid.right-off .panel-edge-toggle--right{right:0}}
 
 .floor-temperature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}.floor-temperature-grid>div{padding:9px 10px;border:1px solid rgba(83,132,196,.2);border-radius:7px;background:rgba(6,20,44,.35)}.floor-temperature-grid span{display:block;color:#9ab0ca;font-size:12px}.floor-temperature-grid b{display:block;margin-top:4px;color:#dce8f7;font-size:14px;font-weight:400}
+
+/* 消防设备详情：顶部与返回按钮、底部与复位按钮对齐。 */
+.floor-device-popup.floor-device-popup--fire{top:18px;bottom:24px;width:420px;max-height:none;display:flex;flex-direction:column;overflow:hidden;padding:20px}
+.floor-device-popup--fire .popup-heading{flex:none}
+.floor-device-tabs{display:flex;flex:none;border-bottom:1px solid rgba(82,132,201,.32);gap:24px;margin:4px 0 16px}
+.floor-device-tabs button{border:0;border-radius:0;background:transparent;padding:10px 0;color:#8190a5;font-size:14px;font-weight:400;border-bottom:2px solid transparent}
+.floor-device-tabs button.active{color:#99c7ff;border-bottom-color:#0879ff}
+.floor-device-body{flex:1;min-height:0;overflow-y:auto;padding-right:6px}
+.floor-device-section{margin-bottom:24px}
+.floor-device-section summary{cursor:pointer;font-size:15px;font-weight:400;padding:0 0 12px;border-bottom:1px solid rgba(82,132,201,.32);color:#dce8f7}
+.floor-device-popup--fire .fields{grid-template-columns:140px minmax(0,1fr);font-size:14px;gap:14px 8px;margin:16px 0;line-height:1.6}
+.floor-device-popup--fire .fields dt{color:#99c7ff}
+.floor-device-popup--fire .fields dd{margin:0;overflow-wrap:anywhere}
+.floor-monitor-state{border:1px solid rgba(82,132,201,.32);border-radius:8px;padding:14px;margin-top:14px}
+.floor-monitor-state h3{font-size:14px;font-weight:400;margin:0;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.floor-monitor-state .fields:last-child{margin-bottom:0}
+@media(max-width:1100px) and (min-width:761px){.floor-device-popup.floor-device-popup--fire{width:370px}}
+@media(max-width:760px){.floor-device-popup.floor-device-popup--fire{top:12px;bottom:24px;left:12px;right:108px;width:auto;padding:14px}.floor-device-popup--fire .fields{grid-template-columns:1fr;font-size:14px;gap:6px}.floor-device-popup--fire .fields dd{margin-bottom:8px}}
+
+.floor-monitor-subtabs{display:flex;justify-content:center;gap:24px;margin:4px 0 14px}
+.floor-monitor-subtabs button{background:transparent;border:0;border-bottom:2px solid transparent;border-radius:0;color:#8190a5;font-size:14px;font-weight:400;padding:8px 0}
+.floor-monitor-subtabs button.active{color:#99c7ff;border-bottom-color:#0879ff}
+.floor-monitor-caption{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;align-items:center;padding-bottom:14px;font-size:14px}
+.floor-monitor-caption small,.floor-pressure-time{font-size:12px;color:#8190a5}
+.floor-monitor-table{width:100%;border-collapse:collapse;font-size:14px;text-align:center;border:1px solid rgba(82,132,201,.32)}
+.floor-monitor-table th{font-weight:400;color:#99c7ff;background:rgba(31,61,112,.65)}
+.floor-monitor-table th,.floor-monitor-table td{padding:8px 10px;line-height:1.4}
+.floor-monitor-table tr:nth-child(even){background:rgba(31,61,112,.3)}
+.floor-device-body .danger{color:#ff8d98}
+.floor-pressure-limits{color:#99c7ff;font-size:12px;display:inline-block;margin-left:6px}
+.floor-pressure-time{text-align:center;margin:16px 0 0}
+.floor-pressure-gauge{position:relative;width:min(280px,100%);margin:0 auto}
+.floor-pressure-gauge svg{display:block;width:100%;height:auto;overflow:visible}
+.floor-pressure-gauge line{stroke:rgba(129,144,165,.4);stroke-width:2}
+.floor-pressure-gauge line.lit{stroke:#53dfad}
+.floor-pressure-gauge text{fill:#8190a5;font-size:12px}
+.floor-pressure-gauge>div{position:absolute;top:43%;left:0;right:0;text-align:center}
+.floor-pressure-gauge strong{font:500 36px D-DIN-PRO,'Microsoft YaHei',sans-serif;color:#53dfad}
+.floor-pressure-gauge p{color:#99c7ff;font-size:14px;margin:8px 0}
+.floor-curve-period{display:flex;justify-content:flex-end;margin-top:16px}
+.floor-curve-period button{height:30px;min-width:78px;border-radius:0;font-size:12px;background:transparent;border-color:#0879ff;color:#99c7ff}
+.floor-curve-period button:first-child{border-radius:6px 0 0 6px}
+.floor-curve-period button:last-child{border-radius:0 6px 6px 0;border-left:0}
+.floor-curve-period button.active{background:#0879ff;color:#fff}
+.floor-curve-empty{min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:#8190a5;font-size:14px}
+.floor-curve-empty i{display:grid;place-items:center;width:100px;height:70px;font-size:42px;color:#99c7ff;background:radial-gradient(ellipse,rgba(8,121,255,.24),transparent 72%)}
+
+.floor-water-monitor .floor-pressure-limits{display:block;margin:14px 0;line-height:1.6}
+.floor-curve-metrics{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.floor-curve-metrics button{font-size:12px;font-weight:400;padding:5px 8px;border-radius:6px;background:transparent;color:#8190a5;border-color:rgba(82,132,201,.32)}
+.floor-curve-metrics button.active{background:rgba(8,121,255,.2);border-color:#0879ff;color:#99c7ff}
+.floor-demo-curve{margin:18px 0 8px}
+.floor-curve-unit{font-size:12px;color:#99c7ff;display:flex;justify-content:space-between;gap:8px}
+.floor-curve-unit span{color:#8190a5}
+.floor-demo-curve svg{width:100%;height:auto;display:block;margin-top:8px}
+.floor-demo-curve line{stroke:rgba(82,132,201,.25);stroke-dasharray:4 4}
+.floor-demo-curve text{fill:#8190a5;font:400 11px 'Microsoft YaHei',sans-serif}
+.floor-demo-curve path{fill:none;stroke:#0879ff;stroke-width:2}
+.floor-demo-curve circle{fill:#99c7ff;stroke:#0879ff;stroke-width:1}
+
+.floor-camera-sections .floor-camera-player{margin-top:16px}
+.floor-device-popup--camera .fields{grid-template-columns:90px minmax(0,1fr)}
+
+.floor-monitor-record-status{display:flex;justify-content:flex-end;margin-bottom:10px}
+
+.map-alarm-handling-status{display:flex;justify-content:flex-end;margin-bottom:12px}
