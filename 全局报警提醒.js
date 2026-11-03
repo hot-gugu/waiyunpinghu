@@ -28,7 +28,7 @@
   const pending = () => records.filter(r => r.status === '待复核');
   const style = document.createElement('style');
   style.textContent = `
-  #globalAlarmCenter{font:400 14px "Microsoft YaHei",sans-serif;color:#24344d;position:relative;z-index:10000}
+  #globalAlarmCenter{font:400 14px "Microsoft YaHei",sans-serif;color:#24344d;position:relative;z-index:1050}
   #globalAlarmCenter *{box-sizing:border-box} #globalAlarmCenter button,#globalAlarmCenter a{font:inherit;cursor:pointer}
   #globalAlarmCenter button:focus-visible,#globalAlarmCenter a:focus-visible{outline:2px solid #0879ff;outline-offset:3px}
   .gac-stack{position:fixed;right:24px;bottom:24px;display:flex;flex-direction:column;gap:12px;max-height:calc(100vh - 48px);overflow-y:auto;overscroll-behavior:contain;padding:2px;width:364px;max-width:calc(100vw - 28px)}

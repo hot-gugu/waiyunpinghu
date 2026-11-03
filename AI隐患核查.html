@@ -93,7 +93,7 @@
 #alarmRangePicker .n-date-picker{width:100%}
 #alarmRangePicker .n-input{height:36px;border-radius:8px;font-size:14px}
 #alarmFilterGrid>div{min-width:0}
-</style><script src="报警来源规则.js"></script></head>
+</style><script src="报警来源规则.js"></script><script src="责任区域级联.js?v=20261102"></script></head>
 
 <body class="font-system bg-pageBg text-textMain h-screen flex overflow-hidden">
     <!-- 左侧主导航菜单 -->
@@ -457,7 +457,7 @@ document.getElementById('alarmDetailVideo').addEventListener('error',()=>{docume
         });
         document.querySelectorAll('[data-gis-close]').forEach(button => button.addEventListener('click', () => gisModal.classList.add('hidden')));
     </script>
-    <script src="navigation.js?v=20261028-account"></script>
+    <script src="navigation.js?v=20261102-responsibility"></script>
 
 <script>
 function formatReviewOverdue(value) {
@@ -538,7 +538,7 @@ updateAlarmStats();
   const isOverdue = Number(row.cells[13].dataset.reviewOverdueSeconds) > 0;
   const scope = document.querySelector('#alarmScopeTabs [aria-selected="true"]').dataset.scope;
   const today = new Date().toLocaleDateString('sv-SE');
-  const match = (scope === 'all' || text(2).slice(0,10) === today) && (!keyword || [0,3,6,11,7].some(i => text(i).toLocaleLowerCase().includes(keyword))) && (!selectedArea||text(6)===selectedArea) && (!selectedLevel||text(5)===selectedLevel) && (!type || text(1) === type) && (!status || text(9) === status) && (!result || (result==='判定样本'?['确认违规','误报'].includes(text(10)):text(10) === result)) && (!overdue || isOverdue === (overdue === '是')) && (!start || text(2) >= start) && (!end || text(2) <= end);
+  const match = (scope === 'all' || text(2).slice(0,10) === today) && (!keyword || [0,3,6,11,7].some(i => text(i).toLocaleLowerCase().includes(keyword))) && AreaCascade.matches(selectedArea,text(6)) && (!selectedLevel||text(5)===selectedLevel) && (!type || text(1) === type) && (!status || text(9) === status) && (!result || (result==='判定样本'?['确认违规','误报'].includes(text(10)):text(10) === result)) && (!overdue || isOverdue === (overdue === '是')) && (!start || text(2) >= start) && (!end || text(2) <= end);
   row.hidden = !match;
   if(match) count++;
  });
@@ -616,10 +616,10 @@ window.addEventListener('load', () => {
 </script>
 <script>
 (() => {
- const {createApp,h,ref}=Vue;const {NConfigProvider,NSelect}=naive;
+ const {createApp,h,ref}=Vue;const {NConfigProvider,NSelect,NCascader}=naive;
  for(const [field,mount,key] of [['alarmAreaFilter','alarmAreaPicker','area'],['alarmLevelFilter','alarmLevelPicker','level']]){
    const hidden=document.getElementById(field),values=key==='level'?['一级','二级','三级','四级']:[...new Set(Array.from(document.querySelectorAll('#alarmRecordsTable tbody tr')).filter(r=>r.cells.length===15).map(r=>r.cells[6].textContent.trim()))],options=[{label:'全部',value:''},...values.map(v=>({label:v,value:v}))];
-   createApp({setup(){const value=ref(hidden.value||null);return ()=>h(NConfigProvider,{themeOverrides:{common:{primaryColor:'#0879ff',fontSize:'14px',borderRadius:'8px'}}},{default:()=>h(NSelect,{value:value.value,options,clearable:true,filterable:true,to:'body',consistentMenuWidth:true,placeholder:'全部','onUpdate:value':v=>{value.value=v;hidden.value=v||'';hidden.dispatchEvent(new Event('change',{bubbles:true}));}})});}}).mount('#'+mount);
+   createApp({setup(){const value=ref(hidden.value||null);return ()=>h(NConfigProvider,{themeOverrides:{common:{primaryColor:'#0879ff',fontSize:'14px',borderRadius:'8px'}}},{default:()=>h(key==='area'?NCascader:NSelect,{value:key==='area'?AreaCascade.selection(value.value):value.value,options:key==='area'?AreaCascade.options(values):options,multiple:key==='area',cascade:true,checkStrategy:'parent',clearable:true,filterable:true,to:'body',consistentMenuWidth:true,placeholder:key==='area'?'请选择责任区域（可多选）':'全部','onUpdate:value':v=>{value.value=v;hidden.value=key==='area'?JSON.stringify(v||[]):v||'';hidden.dispatchEvent(new Event('change',{bubbles:true}));}})});}}).mount('#'+mount);
  }
 })();
 </script>

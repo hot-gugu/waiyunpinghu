@@ -62,7 +62,13 @@
     const start=new Date(end);if(kind==='daily')start.setDate(start.getDate()-1);if(kind==='weekly')start.setDate(start.getDate()-7);if(kind==='monthly')start.setMonth(start.getMonth()-1);
     return [+start,+end-1];
   };
-  const filter=(rows,{range,area,type,level,department}={})=>rows.filter(r=>(!range||(time(r.time)>=range[0]&&time(r.time)<=range[1]))&&(!area||r.area===area)&&(!type||r.type===type)&&(!level||r.level===level)&&(!department||r.department===department));
+  const matchesArea=(area,value)=>{
+    if(window.AreaCascade)return window.AreaCascade.matches(area,value);
+    const selected=(Array.isArray(area)?area:area?[area]:[]).filter(Boolean);
+    const path=v=>String(v||'').split(/\s*\/\s*|-/).join(' / ');
+    return !selected.length||selected.some(item=>path(value)===path(item)||path(value).startsWith(path(item)+' / '));
+  };
+  const filter=(rows,{range,area,type,level,department}={})=>rows.filter(r=>(!range||(time(r.time)>=range[0]&&time(r.time)<=range[1]))&&matchesArea(area,r.area)&&(!type||r.type===type)&&(!level||r.level===level)&&(!department||r.department===department));
   const stats=rows=>{
     const ai=rows.filter(r=>!isFire(r));
     const confirmed=rows.filter(r=>r.confirmed),done=rows.filter(r=>caseEligible(r)&&r.completed),mis=rows.filter(r=>r.status==='已复核'&&r.result==='误报');

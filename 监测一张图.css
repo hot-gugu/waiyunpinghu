@@ -321,4 +321,4 @@
 
 .floor-monitor-record-status{display:flex;justify-content:flex-end;margin-bottom:10px}
 
-.map-alarm-handling-status{display:flex;justify-content:flex-end;margin-bottom:12px}
+.map-alarm-info-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.map-alarm-detail .map-alarm-info-heading .info-title{margin:0}.map-alarm-handling-status{display:flex;justify-content:flex-end;flex:none}

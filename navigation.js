@@ -41,7 +41,6 @@
         "title": "区域管理",
         "icon": "fa-map-o",
         "children": [
-          { "title": "责任区域管理", "href": "责任区域管理.html" },
           { "title": "区域配置", "href": "区域配置.html" }
         ]
       },
@@ -529,7 +528,7 @@
 (() => {
  const source = document.currentScript.src;
  const script = document.createElement('script');
- script.src = new URL('全局报警提醒.js', source).href;
+ script.src = new URL('全局报警提醒.js?v=20261102-layer', source).href;
  document.head.appendChild(script);
 })();
 
