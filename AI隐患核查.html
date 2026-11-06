@@ -93,7 +93,7 @@
 #alarmRangePicker .n-date-picker{width:100%}
 #alarmRangePicker .n-input{height:36px;border-radius:8px;font-size:14px}
 #alarmFilterGrid>div{min-width:0}
-</style><script src="报警来源规则.js"></script><script src="责任区域级联.js?v=20261102"></script></head>
+</style><script src="报警来源规则.js"></script><script src="责任区域级联.js?v=20261104-all"></script></head>
 
 <body class="font-system bg-pageBg text-textMain h-screen flex overflow-hidden">
     <!-- 左侧主导航菜单 -->
@@ -619,7 +619,7 @@ window.addEventListener('load', () => {
  const {createApp,h,ref}=Vue;const {NConfigProvider,NSelect,NCascader}=naive;
  for(const [field,mount,key] of [['alarmAreaFilter','alarmAreaPicker','area'],['alarmLevelFilter','alarmLevelPicker','level']]){
    const hidden=document.getElementById(field),values=key==='level'?['一级','二级','三级','四级']:[...new Set(Array.from(document.querySelectorAll('#alarmRecordsTable tbody tr')).filter(r=>r.cells.length===15).map(r=>r.cells[6].textContent.trim()))],options=[{label:'全部',value:''},...values.map(v=>({label:v,value:v}))];
-   createApp({setup(){const value=ref(hidden.value||null);return ()=>h(NConfigProvider,{themeOverrides:{common:{primaryColor:'#0879ff',fontSize:'14px',borderRadius:'8px'}}},{default:()=>h(key==='area'?NCascader:NSelect,{value:key==='area'?AreaCascade.selection(value.value):value.value,options:key==='area'?AreaCascade.options(values):options,multiple:key==='area',cascade:true,checkStrategy:'parent',clearable:true,filterable:true,to:'body',consistentMenuWidth:true,placeholder:key==='area'?'请选择责任区域（可多选）':'全部','onUpdate:value':v=>{value.value=v;hidden.value=key==='area'?JSON.stringify(v||[]):v||'';hidden.dispatchEvent(new Event('change',{bubbles:true}));}})});}}).mount('#'+mount);
+   createApp({setup(){const value=ref(hidden.value||null);return ()=>h(NConfigProvider,{themeOverrides:{common:{primaryColor:'#0879ff',fontSize:'14px',borderRadius:'8px'}}},{default:()=>h(key==='area'?AreaCascade.cascader():NSelect,{value:key==='area'?AreaCascade.selection(value.value):value.value,options:key==='area'?AreaCascade.options(values):options,multiple:key==='area',cascade:true,checkStrategy:'parent',clearable:true,filterable:true,to:'body',consistentMenuWidth:true,placeholder:key==='area'?'请选择责任区域（可多选）':'全部','onUpdate:value':v=>{value.value=v;hidden.value=key==='area'?JSON.stringify(v||[]):v||'';hidden.dispatchEvent(new Event('change',{bubbles:true}));}})});}}).mount('#'+mount);
  }
 })();
 </script>

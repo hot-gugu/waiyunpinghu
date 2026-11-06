@@ -100,7 +100,7 @@
             border-radius: 3px;
         }
     </style>
-<link rel="stylesheet" href="区域配置.css?v=20261102-owner-picker"></head>
+<link rel="stylesheet" href="区域配置.css?v=20261104-owner-phone"></head>
 
 <body class="h-screen flex">
     <!-- ========== 左侧侧边栏 ========== -->
@@ -896,10 +896,10 @@
             divisionMap.innerHTML = `
                 <div class="h-full flex flex-col">
                     <div class="px-5 py-4 bg-white border-b border-borderLine flex items-center gap-4">
-                        <label class="text-sm text-textSecondary">楼栋</label>
-                        <select id="buildingSelect" class="border border-borderLine rounded px-3 py-2 text-sm min-w-[180px]"><option>生产综合楼</option><option>选矿主厂房</option><option>运输转运楼</option></select>
-                        <label class="text-sm text-textSecondary ml-4">楼层</label>
-                        <select id="floorSelect" class="border border-borderLine rounded px-3 py-2 text-sm min-w-[140px]"><option>一层</option><option>二层</option><option>三层</option></select>
+                        <label for="buildingSelect" class="text-sm text-textSecondary">楼栋</label>
+                        <input id="buildingSelect" type="text" readonly aria-readonly="true" class="border border-borderLine rounded px-3 py-2 text-sm bg-gray-50 w-[180px]" />
+                        <label for="floorSelect" class="text-sm text-textSecondary ml-4">楼层</label>
+                        <input id="floorSelect" type="text" readonly aria-readonly="true" class="border border-borderLine rounded px-3 py-2 text-sm bg-gray-50 w-[140px]" />
                         <span class="ml-auto text-xs text-textLight"><i class="fa fa-info-circle mr-1"></i>支持多选，再次单击可取消</span>
                     </div>
                     <div class="flex-1 p-6">
@@ -1020,8 +1020,8 @@
                 divisionAction = d.getElementById('openAreaDivision');
                 const savedDivision = d.getElementById('areaDivisionSelect').value.split(' / ');
                 selectedZone = savedDivision[2] ? savedDivision[2].split('、') : [];
-                if (savedDivision[0]) d.getElementById('buildingSelect').value = savedDivision[0];
-                if (savedDivision[1]) d.getElementById('floorSelect').value = savedDivision[1];
+                d.getElementById('buildingSelect').value = drawer.dataset.building || savedDivision[0] || '';
+                d.getElementById('floorSelect').value = drawer.dataset.floor || savedDivision[1] || '';
                 resetZones();
                 divisionMap.querySelectorAll('.zone-cell').forEach(zone => {
                     if (selectedZone.includes(zone.dataset.zone)) zone.classList.add('border-primary', 'bg-blue-50', 'text-primary');
@@ -1106,7 +1106,7 @@
     </script>
     <script src="区域配置-表单规则.js"></script>
     <script src="责任区域数据.js"></script>
-    <script src="区域配置-责任归属.js?v=20261102-owner-picker"></script>
+    <script src="区域配置-责任归属.js?v=20261105-no-department-radio"></script>
     <script src="区域配置-列表存储.js?v=20261102"></script>
     <script src="navigation.js?v=20261102-responsibility"></script>
 

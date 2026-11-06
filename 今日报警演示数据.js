@@ -40,7 +40,7 @@ if(window.AlarmEventLevels)window.ALARM_DEMO_RECORDS.forEach(record=>record.leve
  const fireCases=[
   {id:'FIRE-DEMO-'+today+'-W1',buildingId:'warehouse-1',type:'烟雾报警',device:'1号仓库消防监测主机',area:'1号仓库',level:'一级',status:'待复核',result:'-',reviewer:'—',reviewTime:'—',time:'10:12:00',photo:'sample-blocked-passage.jpg',confidence:'99.2%',owner:'王值守'},
   {id:'FIRE-DEMO-'+today+'-W2',buildingId:'warehouse-2',alarmStatus:'已处置',type:'焰火报警',device:'2号仓库消防监测主机',area:'2号仓库',level:'一级',status:'已复核',result:'确认违规',reviewer:'王值守',reviewTime:'09:50:00',time:'09:48:00',photo:'sample-normal-scene.jpg',confidence:'98.6%',owner:'王值守'},
-  {id:'FIRE-DEMO-'+today+'-W3',buildingId:'warehouse-3',type:'消防水压偏低',device:'3号仓库消防监测主机',area:'3号仓库',level:'二级',status:'已复核',result:'确认违规',reviewer:'王值守',reviewTime:'09:18:00',time:'09:15:00',photo:'sample-safety-belt.jpg',confidence:'97.4%',owner:'王值守'},
+  {id:'FIRE-DEMO-'+today+'-W3',buildingId:'warehouse-3',alarmStatus:'处置中',type:'消防水压偏低',device:'3号仓库消防监测主机',area:'3号仓库',level:'二级',status:'已复核',result:'确认违规',reviewer:'王值守',reviewTime:'09:18:00',time:'09:15:00',photo:'sample-safety-belt.jpg',confidence:'97.4%',owner:'王值守'},
   {id:'FIRE-DEMO-'+today+'-W4',buildingId:'warehouse-4',alarmStatus:'已处置',type:'消防通道堵塞',device:'4号仓库消防监测主机',area:'4号仓库',level:'二级',status:'已复核',result:'确认违规',reviewer:'王值守',reviewTime:'08:42:00',time:'08:40:00',photo:'sample-blocked-passage.jpg',confidence:'98.1%',owner:'王值守'}
  ];
  fireCases.forEach(item=>{

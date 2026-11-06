@@ -38,7 +38,7 @@
  },template:` <div class="map-fire-detail">
  <div class="fire-detail-tabs" role="tablist" aria-label="消防报警详情"><button role="tab" :aria-selected="detailTab==='details'" :class="{active:detailTab==='details'}" @click="detailTab='details'">预警信息</button><button role="tab" :aria-selected="detailTab==='records'" :class="{active:detailTab==='records'}" @click="detailTab='records'">处置记录</button></div>
  <div v-if="detailTab==='details'" role="tabpanel">
- <details class="fire-detail-card" open><summary>预警信息 | 处置等级：{{active.level||'—'}}</summary><div class="fire-warning"><div class="fire-warning-name">{{active.type}}</div><dl class="fire-fields"><dt>首次接收时间：</dt><dd>{{fireDetail.first}}</dd><dt>末次接收时间：</dt><dd>{{fireDetail.last}}</dd></dl></div></details>
+ <details class="fire-detail-card" open><summary>预警信息 | 处置等级：{{active.level||'—'}}</summary><div class="fire-warning"><div class="fire-warning-name">{{active.type}}</div><dl class="fire-fields"><dt>报警ID：</dt><dd>{{active.id}}</dd><dt>首次接收时间：</dt><dd>{{fireDetail.first}}</dd><dt>末次接收时间：</dt><dd>{{fireDetail.last}}</dd></dl></div></details>
  <details class="fire-detail-card" open><summary>设备信息</summary><dl class="fire-fields"><dt>楼宇名称：</dt><dd>{{fireDetail.building}}</dd><dt>IMEI：</dt><dd>{{fireDetail.imei}}</dd><dt>系统类型：</dt><dd>{{fireDetail.system}}</dd><dt>设备类型：</dt><dd>{{fireDetail.deviceType}}</dd><dt>设备位置：</dt><dd>{{areaPath(active)}}</dd><dt>品牌型号：</dt><dd>{{fireDetail.model}}</dd><dt>安装日期：</dt><dd>{{fireDetail.installed}}</dd></dl></details>
 
  <details class="fire-detail-card" open><summary>催促记录</summary><n-empty description="暂无催促记录" size="large" class="fire-empty" /></details>
